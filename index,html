@@ -1,1 +1,856 @@
-/
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Times | Grim Grace</title>
+<meta name="description" content="The Times — газета ролевой Grim Grace. Лондон, 1852 год.">
+<meta property="og:title" content="The Times | Grim Grace">
+<meta property="og:description" content="Газетные выпуски ролевой Grim Grace. Лондон, 1852 год.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+SC:wght@400;500;600&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+
+<script>document.documentElement.classList.add('js');</script>
+
+<style>
+/* =========================================================
+   ТОКЕНЫ ТЕМ
+   светлая = издание для людей, тёмная = издание для вампиров
+   ========================================================= */
+
+:root {
+  --shadow: 0 24px 60px rgba(0,0,0,0.35);
+  --serif: 'Cormorant Garamond', 'Times New Roman', serif;
+  --caps:  'Cormorant SC', 'Cormorant Garamond', serif;
+  --black: 'UnifrakturMaguntia', 'Cormorant SC', serif;
+}
+
+html[data-theme="light"] {
+  --bg:        #ddd5c2;
+  --bg-deep:   #cbc2ad;
+  --paper:     #f7f3e9;
+  --paper-alt: #f1ebdc;
+  --text:      #211d16;
+  --text-dim:  #6d6455;
+  --accent:    #8c6a1c;
+  --accent-hi: #b8912f;
+  --accent-lo: #e2d3a8;
+  --rule:      rgba(140, 106, 28, 0.30);
+  --rule-soft: rgba(33, 29, 22, 0.14);
+  --halo:      rgba(255, 246, 214, 0.85);
+  --noise:     0.035;
+}
+
+html[data-theme="dark"] {
+  --bg:        #070508;
+  --bg-deep:   #030203;
+  --paper:     #100b0e;
+  --paper-alt: #150e12;
+  --text:      #c9bfb4;
+  --text-dim:  #7d746c;
+  --accent:    #a11b31;
+  --accent-hi: #c02540;
+  --accent-lo: #3a0812;
+  --rule:      rgba(161, 27, 49, 0.30);
+  --rule-soft: rgba(201, 191, 180, 0.12);
+  --halo:      rgba(110, 15, 31, 0.16);
+  --noise:     0.05;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-lo) var(--bg);
+}
+::-webkit-scrollbar { width: 10px; background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent-lo); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--serif);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.9s ease, color 0.9s ease;
+}
+
+::selection { background: var(--accent); color: var(--paper); }
+
+a { color: var(--accent); }
+
+:focus-visible {
+  outline: 1px solid var(--accent-hi);
+  outline-offset: 3px;
+}
+
+/* ---------- атмосфера: зерно бумаги + свет/сумрак ---------- */
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 90;
+  pointer-events: none;
+  opacity: var(--noise);
+  transition: opacity 0.9s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.aura {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 70% 45% at 50% 0%, var(--halo), transparent 70%);
+  animation: auraBreath 16s ease-in-out infinite;
+  transition: background 0.9s ease;
+}
+@keyframes auraBreath {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.05); }
+}
+
+.vignette {
+  position: fixed; inset: 0; z-index: 89;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+  background: radial-gradient(ellipse 75% 65% at 50% 42%, transparent 40%, rgba(4,2,4,0.55) 78%, rgba(2,1,2,0.92) 100%);
+}
+html[data-theme="dark"] .vignette { opacity: 1; }
+
+/* ================= ШАПКА ================= */
+
+header {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding: clamp(46px, 9vh, 88px) 20px 0;
+}
+
+.eyebrow {
+  font-family: var(--caps);
+  font-size: 0.72rem;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.masthead {
+  font-family: var(--black);
+  font-weight: 400;
+  font-size: clamp(3rem, 11vw, 7.5rem);
+  line-height: 1;
+  margin: 14px 0 10px;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.masthead-rules {
+  max-width: 1080px;
+  margin: 0 auto;
+  border-top: 2px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 9px 0;
+  display: flex;
+  justify-content: center;
+  gap: clamp(12px, 4vw, 40px);
+  flex-wrap: wrap;
+  font-family: var(--caps);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.masthead-rules span { white-space: nowrap; }
+
+/* ================= ПЕРЕКЛЮЧАТЕЛЬ ИЗДАНИЙ ================= */
+
+nav.editions {
+  position: relative;
+  z-index: 5;
+  max-width: 1080px;
+  margin: clamp(26px, 5vh, 48px) auto 0;
+  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 26px);
+}
+
+.edition-btn {
+  appearance: none;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 14px clamp(14px, 3vw, 30px);
+  font-family: var(--caps);
+  font-size: clamp(0.78rem, 2.4vw, 0.95rem);
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  color: var(--text-dim);
+  transition: color 0.5s ease, border-color 0.5s ease, background 0.5s ease;
+}
+.edition-btn .sub {
+  display: block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-indent: 0;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+.edition-btn:hover { color: var(--text); }
+.edition-btn.active {
+  color: var(--text);
+  border-color: var(--rule);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+/* ================= ЛЕНТА ВЫПУСКОВ ================= */
+
+main {
+  position: relative;
+  z-index: 5;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: clamp(34px, 6vh, 64px) 20px 40px;
+}
+
+.edition { display: none; }
+.edition.active { display: block; animation: editionIn 0.8s ease both; }
+@keyframes editionIn {
+  from { opacity: 0; transform: translateY(14px); filter: blur(4px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+
+.rubrics {
+  text-align: center;
+  font-family: var(--caps);
+  font-size: 0.68rem;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 14px;
+  margin-bottom: clamp(28px, 5vh, 48px);
+}
+
+/* ---------- лист газеты ---------- */
+
+.issue {
+  background: var(--paper);
+  border: 1px solid var(--rule-soft);
+  box-shadow: var(--shadow);
+  margin-bottom: clamp(30px, 6vh, 56px);
+  transition: background 0.9s ease, border-color 0.9s ease;
+}
+
+.issue > summary {
+  display: block;
+  list-style: none;
+  cursor: pointer;
+  padding: clamp(18px, 4vw, 26px) clamp(18px, 5vw, 44px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.4s ease;
+}
+.issue > summary::-webkit-details-marker { display: none; }
+.issue[open] > summary { border-bottom-color: var(--rule); }
+
+.issue-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--caps);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.issue-meta .date { color: var(--accent); }
+
+.issue-title {
+  font-family: var(--caps);
+  font-weight: 600;
+  font-size: clamp(1.4rem, 4.6vw, 2.35rem);
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  margin-top: 12px;
+  color: var(--text);
+  transition: color 0.4s ease;
+}
+.issue > summary:hover .issue-title { color: var(--accent); }
+
+.issue-standfirst {
+  font-style: italic;
+  font-size: clamp(1rem, 2.6vw, 1.15rem);
+  color: var(--text-dim);
+  margin-top: 8px;
+  max-width: 62ch;
+}
+
+.issue-open-hint {
+  display: block;
+  margin-top: 14px;
+  font-family: var(--caps);
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.75;
+}
+.issue[open] .issue-open-hint { display: none; }
+
+/* ---------- тело выпуска ---------- */
+
+.issue-body {
+  padding: clamp(22px, 5vw, 44px);
+  animation: bodyIn 0.6s ease both;
+}
+@keyframes bodyIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.columns {
+  column-count: 2;
+  column-gap: clamp(24px, 4vw, 48px);
+  column-rule: 1px solid var(--rule-soft);
+}
+@media (max-width: 760px) {
+  .columns { column-count: 1; }
+}
+
+.columns p {
+  font-size: 1.08rem;
+  line-height: 1.78;
+  text-align: justify;
+  hyphens: auto;
+  margin-bottom: 1.15em;
+}
+
+.columns p.lead::first-letter {
+  font-family: var(--caps);
+  font-weight: 600;
+  font-size: 3.6em;
+  float: left;
+  line-height: 0.78;
+  margin: 0.06em 0.1em 0 0;
+  color: var(--accent);
+}
+
+/* рубрика внутри статьи — как «| PAY ATTENTION !» в оригинале */
+.kicker {
+  break-inside: avoid;
+  font-family: var(--caps);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-top: 1px solid var(--rule);
+  padding-top: 10px;
+  margin: 22px 0 12px;
+}
+.kicker::before { content: '| '; opacity: 0.6; }
+
+/* врезка-цитата */
+.pull {
+  break-inside: avoid;
+  margin: 22px 0;
+  padding: 16px 0;
+  border-top: 2px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--caps);
+  font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+  line-height: 1.45;
+  text-align: center;
+  color: var(--text);
+}
+.pull cite {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+
+/* иллюстрация */
+figure.cut {
+  break-inside: avoid;
+  margin: 0 0 20px;
+  border: 1px solid var(--rule);
+  background: var(--paper-alt);
+}
+figure.cut img {
+  display: block;
+  width: 100%;
+  height: clamp(150px, 26vw, 300px);
+  object-fit: cover;
+}
+html[data-theme="dark"] figure.cut img { filter: grayscale(45%) contrast(1.08) brightness(0.78); }
+html[data-theme="light"] figure.cut img { filter: grayscale(65%) sepia(22%) contrast(1.05); }
+
+figure.cut .plate {
+  height: clamp(120px, 20vw, 220px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--caps);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: repeating-linear-gradient(45deg, transparent, transparent 7px, var(--rule-soft) 7px, var(--rule-soft) 8px);
+}
+figure.cut figcaption {
+  padding: 9px 12px;
+  border-top: 1px solid var(--rule-soft);
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+/* широкий блок на всю ширину листа внутри колонок */
+.span-all { column-span: all; }
+
+/* объявления, мелочи, курсы, погода */
+.notice {
+  break-inside: avoid;
+  border: 1px solid var(--rule);
+  padding: 14px 16px;
+  margin: 20px 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-dim);
+}
+.notice-title {
+  display: block;
+  font-family: var(--caps);
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.issue-sign {
+  column-span: all;
+  margin-top: 28px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  text-align: right;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--text-dim);
+}
+
+/* орнамент-разделитель */
+.flourish {
+  display: block;
+  width: min(340px, 70vw);
+  margin: 0 auto clamp(28px, 5vh, 44px);
+  overflow: visible;
+}
+.flourish path { fill: none; stroke: var(--accent); stroke-width: 1.1; stroke-linecap: round; }
+.flourish .gem { fill: var(--accent-hi); stroke: none; }
+
+/* ================= ПОДВАЛ ================= */
+
+footer {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding: 40px 20px 70px;
+}
+footer .rule {
+  width: min(200px, 50vw);
+  height: 1px;
+  margin: 0 auto 22px;
+  background: linear-gradient(to right, transparent, var(--rule), transparent);
+}
+footer p {
+  font-style: italic;
+  font-size: 0.95rem;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+}
+footer a { text-decoration: none; border-bottom: 1px solid transparent; }
+footer a:hover { border-bottom-color: var(--accent); }
+
+/* ================= КНОПКА «НАВЕРХ» ================= */
+
+.to-top {
+  position: fixed;
+  right: 18px; bottom: 18px;
+  z-index: 95;
+  width: 44px; height: 44px;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: var(--paper);
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: 0; visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s, color 0.3s ease, border-color 0.3s ease;
+}
+.to-top.visible { opacity: 1; visibility: visible; transform: none; }
+.to-top:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ================= МЕЛОЧИ ================= */
+
+@media (max-width: 640px) {
+  .masthead-rules { font-size: 0.62rem; letter-spacing: 0.18em; gap: 8px; }
+  .columns p { font-size: 1.06rem; text-align: left; }
+  nav.editions { gap: 8px; }
+  .edition-btn { padding: 12px 10px; letter-spacing: 0.1em; text-indent: 0.1em; }
+}
+
+@media print {
+  .aura, .vignette, nav.editions, .to-top, footer, body::before { display: none !important; }
+  body { background: #fff; color: #000; }
+  .issue { box-shadow: none; border: none; }
+  .issue-body { display: block !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="aura"></div>
+<div class="vignette"></div>
+
+<header>
+  <p class="eyebrow" lang="en">London &middot; MDCCCLII</p>
+  <h1 class="masthead" lang="en">The Times</h1>
+  <div class="masthead-rules">
+    <span>Основана в 1785</span>
+    <span>&#10022;</span>
+    <span id="editionLabel">Общее издание</span>
+    <span>&#10022;</span>
+    <span>Цена 5d.</span>
+  </div>
+</header>
+
+<nav class="editions" role="tablist" aria-label="Издания">
+  <button class="edition-btn active" id="btn-humans" role="tab" aria-selected="true" aria-controls="humans" data-edition="humans">
+    Для людей
+    <span class="sub">то, что читает Лондон</span>
+  </button>
+  <button class="edition-btn" id="btn-vampires" role="tab" aria-selected="false" aria-controls="vampires" data-edition="vampires" tabindex="-1">
+    Для вампиров
+    <span class="sub">то, что читает «Альбион»</span>
+  </button>
+</nav>
+
+<main>
+
+<!-- =========================================================
+     ИЗДАНИЕ ДЛЯ ЛЮДЕЙ (светлая тема)
+     ========================================================= -->
+<section class="edition active" id="humans" role="tabpanel" aria-labelledby="btn-humans">
+
+  <p class="rubrics" lang="en">world &middot; weather &middot; finance &middot; lifestyle</p>
+
+  <!-- ▼▼▼ НАЧАЛО ВЫПУСКА — копируй блок целиком, чтобы добавить новый ▼▼▼ -->
+  <details class="issue" open>
+    <summary>
+      <div class="issue-meta">
+        <span class="date">21 октября 1852</span>
+        <span>Выпуск № XXI</span>
+      </div>
+      <h2 class="issue-title">Зверь в тумане: чудовищные убийства в Восточном Лондоне</h2>
+      <p class="issue-standfirst">Шесть жертв за девять ночей. Скотленд-Ярд склоняется к версии о безумце.</p>
+      <span class="issue-open-hint">Читать выпуск</span>
+    </summary>
+
+    <div class="issue-body">
+      <div class="columns">
+
+        <figure class="cut span-all">
+          <!-- Вместо блока .plate вставь: <img src="ССЫЛКА" alt=""> -->
+          <div class="plate">Гравюра</div>
+          <figcaption>Переулок близ Леман-стрит на рассвете.</figcaption>
+        </figure>
+
+        <p class="lead">Редакция долго воздерживалась от публикации, не желая тревожить общество в дни национального траура. Однако молчание сделалось преступлением против читателя. С ночи на 13 октября в приходах Уайтчепела, Шедуэлла и Спиталфилдса обнаружены тела шести подданных Ее Величества: трех мужчин, двух женщин и ребенка. Все — из числа беднейших. Все — найдены на рассвете, в переулках, отходящих от людных улиц.</p>
+
+        <blockquote class="pull">
+          «Это не человек. Человек так не ест»
+          <cite>из показаний констебля N дивизиона</cite>
+        </blockquote>
+
+        <p class="kicker" lang="en">We spare you the details</p>
+        <p>О состоянии тел мы не станем писать. Скажем лишь, что увечья не оставляют сомнений: убийца не просто лишает жертву жизни — он остается подле нее. Полицейский хирург мистер Аддершоу, осмотревший четверых, отказался говорить с нашим корреспондентом и, по свидетельству очевидцев, покинул мертвецкую в состоянии, недостойном его лет и опыта. Приходской священник церкви Святого Матфея отслужил панихиду при закрытых гробах, что само по себе говорит довольно.</p>
+
+        <p>Скотленд-Ярд склоняется к версии о безумце, бежавшем из частного дома для умалишенных, либо о моряке, сошедшем с корабля Ост-Индской компании и повредившемся рассудком в дальнем плавании. Инспектор, руководящий розыском, отверг предположение о причастности нескольких лиц: почерк, по его словам, слишком единообразен. Мы разделяем осторожность полиции и призываем читателей к тому же. В Ист-Энде уже толкуют о нечистой силе, о звере, о каре Господней за смерть Королевы. Подобные разговоры не спасли еще ни одной жизни.</p>
+
+        <p class="kicker" lang="en">In your best interest</p>
+        <p>Мы вынуждены заметить, что силы столичной полиции ныне обращены на охрану Дворца и поддержание порядка при Парламенте, где вопрос о Регентстве все еще не разрешен. Восточные приходы патрулируются вполовину против обыкновения. Редакция почтительно, но твердо обращается к министру внутренних дел: Империя, что не может уберечь своих беднейших подданных от пожирающего их чудовища, дурно готовится к правлению юного Короля.</p>
+
+        <div class="notice">
+          <span class="notice-title">Объявление</span>
+          До поимки злодея мы советуем: не выходить после наступления темноты в одиночку; матерям — держать детей при себе с вечернего звона; хозяевам питейных заведений — провожать до дому припозднившихся гостей. Всякого, кто видел что-либо в означенные ночи, просят явиться в участок на Леман-стрит. Обещано вознаграждение в пятьдесят фунтов.
+        </div>
+
+        <p>Империя оплакивает Королеву — и не смеет забывать о живых. «Таймс» будет следовать за этим делом до его конца, каким бы он ни был, и не позволит ни страху, ни суеверию, ни чиновничьему удобству занять место истины.</p>
+
+        <p class="issue-sign">Редакция «Таймс»</p>
+      </div>
+    </div>
+  </details>
+  <!-- ▲▲▲ КОНЕЦ ВЫПУСКА ▲▲▲ -->
+
+  <svg class="flourish" viewBox="0 0 400 40" aria-hidden="true" focusable="false">
+    <path d="M20,20 C70,20 90,6 120,14 C150,22 160,20 200,20 C240,20 250,22 280,14 C310,6 330,20 380,20"/>
+    <path d="M120,14 C108,26 92,30 78,24 C64,18 66,6 78,8 C88,10 84,22 72,20"/>
+    <path d="M280,14 C292,26 308,30 322,24 C336,18 334,6 322,8 C312,10 316,22 328,20"/>
+    <rect class="gem" x="196" y="16" width="8" height="8" transform="rotate(45 200 20)"/>
+  </svg>
+
+  <details class="issue">
+    <summary>
+      <div class="issue-meta">
+        <span class="date">14 октября 1852</span>
+        <span>Выпуск № XX</span>
+      </div>
+      <h2 class="issue-title">Империя в трауре: вопрос о Регентстве не разрешен</h2>
+      <p class="issue-standfirst">Парламент заседает третьи сутки. Наследнику престола одиннадцать лет.</p>
+      <span class="issue-open-hint">Читать выпуск</span>
+    </summary>
+
+    <div class="issue-body">
+      <div class="columns">
+        <p class="lead">Здесь начинается текст выпуска. Первая буква абзаца становится буквицей сама — достаточно оставить у абзаца класс lead.</p>
+        <p>Обычные абзацы пишутся без всяких классов. Текст сам разложится на две колонки на широком экране и в одну — на телефоне.</p>
+        <p class="issue-sign">Редакция «Таймс»</p>
+      </div>
+    </div>
+  </details>
+
+</section>
+
+<!-- =========================================================
+     ИЗДАНИЕ ДЛЯ ВАМПИРОВ (тёмная тема)
+     ========================================================= -->
+<section class="edition" id="vampires" role="tabpanel" aria-labelledby="btn-vampires">
+
+  <p class="rubrics">Капитул &middot; Угодья &middot; Долги &middot; Объявления</p>
+
+  <details class="issue" open>
+    <summary>
+      <div class="issue-meta">
+        <span class="date">21 октября 1852</span>
+        <span>Оттиск для членов клуба</span>
+      </div>
+      <h2 class="issue-title">О неосторожности в восточных приходах</h2>
+      <p class="issue-standfirst">Шесть тел за девять ночей — и полсотни строк в утренней газете. Капитул требует имени.</p>
+      <span class="issue-open-hint">Читать выпуск</span>
+    </summary>
+
+    <div class="issue-body">
+      <div class="columns">
+
+        <p class="lead">Сегодняшний утренний лист «Таймс» лежит на столе Капитула. Шесть жертв, названных поименно, приход за приходом, и фраза констебля, которую к вечеру повторит весь Ист-Энд. Двадцать лет безупречной тишины стоили дороже, чем девять ночей чьего-то удовольствия.</p>
+
+        <blockquote class="pull">
+          «Голод — не оправдание. Оправданий не существует»
+          <cite>из речи в Капитуле</cite>
+        </blockquote>
+
+        <p class="kicker">Угодья</p>
+        <p>Уайтчепел, Шедуэлл и Спиталфилдс закрыты для охоты до особого распоряжения. Неофитам, чьи наставники не поручились за них лично, предписано кормиться исключительно в стенах клуба.</p>
+
+        <div class="notice">
+          <span class="notice-title">К сведению</span>
+          Всякий, кому известно имя, обязан назвать его Магистру своего круга до третьей ночи. Умолчание будет расценено как соучастие.
+        </div>
+
+        <p class="issue-sign">По воле Высшего круга</p>
+      </div>
+    </div>
+  </details>
+
+  <svg class="flourish" viewBox="0 0 400 40" aria-hidden="true" focusable="false">
+    <path d="M20,20 C70,20 90,6 120,14 C150,22 160,20 200,20 C240,20 250,22 280,14 C310,6 330,20 380,20"/>
+    <path d="M120,14 C108,26 92,30 78,24 C64,18 66,6 78,8 C88,10 84,22 72,20"/>
+    <path d="M280,14 C292,26 308,30 322,24 C336,18 334,6 322,8 C312,10 316,22 328,20"/>
+    <rect class="gem" x="196" y="16" width="8" height="8" transform="rotate(45 200 20)"/>
+  </svg>
+
+  <details class="issue">
+    <summary>
+      <div class="issue-meta">
+        <span class="date">12 октября 1852</span>
+        <span>Оттиск для членов клуба</span>
+      </div>
+      <h2 class="issue-title">Пропажа из королевского кабинета</h2>
+      <p class="issue-standfirst">Реестр не найден. Каждая ночь промедления работает против рода.</p>
+      <span class="issue-open-hint">Читать выпуск</span>
+    </summary>
+
+    <div class="issue-body">
+      <div class="columns">
+        <p class="lead">Место для текста выпуска.</p>
+        <p class="issue-sign">По воле Высшего круга</p>
+      </div>
+    </div>
+  </details>
+
+</section>
+
+<!-- =========================================================
+     ШАБЛОН ВЫПУСКА — СКОПИРУЙ И ВСТАВЬ ВНУТРЬ НУЖНОЙ ВКЛАДКИ
+
+<details class="issue" open>   ← open = выпуск раскрыт сразу; убери слово open, чтобы был свёрнут
+  <summary>
+    <div class="issue-meta">
+      <span class="date">ДАТА</span>
+      <span>ПОДПИСЬ СПРАВА</span>
+    </div>
+    <h2 class="issue-title">ЗАГОЛОВОК</h2>
+    <p class="issue-standfirst">Подзаголовок в одну-две строки.</p>
+    <span class="issue-open-hint">Читать выпуск</span>
+  </summary>
+
+  <div class="issue-body">
+    <div class="columns">
+
+      <figure class="cut span-all">
+        <img src="ССЫЛКА-НА-КАРТИНКУ" alt="">
+        <figcaption>Подпись к иллюстрации.</figcaption>
+      </figure>
+
+      <p class="lead">Первый абзац — с буквицей.</p>
+      <p>Обычный абзац.</p>
+
+      <p class="kicker">Рубрика внутри статьи</p>
+      <p>Текст после рубрики.</p>
+
+      <blockquote class="pull">
+        «Цитата крупным шрифтом»
+        <cite>кто сказал</cite>
+      </blockquote>
+
+      <div class="notice">
+        <span class="notice-title">Объявление</span>
+        Текст объявления в рамке.
+      </div>
+
+      <p class="issue-sign">Подпись редакции</p>
+    </div>
+  </div>
+</details>
+
+     ПОЛЕЗНОЕ:
+     • class="span-all" на любом блоке растягивает его на обе колонки
+     • картинка: <figure class="cut"><img src="..." alt=""><figcaption>...</figcaption></figure>
+     • пустая рамка вместо картинки: <div class="plate">Гравюра</div>
+     ========================================================= -->
+
+</main>
+
+<button class="to-top" id="toTop" aria-label="Наверх">&uarr;</button>
+
+<footer>
+  <div class="rule"></div>
+  <p>Газета ролевой <a href="https://t.me/Grim_Grace" target="_blank" rel="noopener">@Grim_Grace</a></p>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- переключение изданий и темы ---------- */
+
+  var buttons  = Array.prototype.slice.call(document.querySelectorAll('.edition-btn'));
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.edition'));
+  var label    = document.getElementById('editionLabel');
+
+  var META = {
+    humans:   { theme: 'light', label: 'Издание для людей' },
+    vampires: { theme: 'dark',  label: 'Оттиск для «Альбиона»' }
+  };
+
+  function activate(name, updateHash) {
+    var meta = META[name];
+    if (!meta) return;
+
+    buttons.forEach(function (b) {
+      var on = b.dataset.edition === name;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+      b.tabIndex = on ? 0 : -1;
+    });
+    sections.forEach(function (s) { s.classList.toggle('active', s.id === name); });
+
+    document.documentElement.dataset.theme = meta.theme;
+    label.textContent = meta.label;
+
+    if (updateHash !== false) history.replaceState(null, '', '#' + name);
+  }
+
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (!btn.classList.contains('active')) activate(btn.dataset.edition);
+    });
+    btn.addEventListener('keydown', function (e) {
+      var i = buttons.indexOf(btn), next = null;
+      if (e.key === 'ArrowRight') next = buttons[(i + 1) % buttons.length];
+      if (e.key === 'ArrowLeft')  next = buttons[(i - 1 + buttons.length) % buttons.length];
+      if (next) { e.preventDefault(); next.focus(); activate(next.dataset.edition); }
+    });
+  });
+
+  var startId = location.hash.slice(1);
+  if (META[startId]) activate(startId, false);
+
+  window.addEventListener('hashchange', function () {
+    var id = location.hash.slice(1);
+    if (META[id]) activate(id, false);
+  });
+
+  /* ---------- кнопка «наверх» ---------- */
+
+  var toTop = document.getElementById('toTop');
+  var ticking = false;
+
+  function frame() {
+    ticking = false;
+    toTop.classList.toggle('visible', window.scrollY > 400);
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(frame); }
+  }, { passive: true });
+
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  frame();
+})();
+</script>
+
+</body>
+</html>
