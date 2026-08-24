@@ -445,15 +445,144 @@ figure.cut figcaption {
   margin-bottom: 8px;
 }
 
-.issue-sign {
+/* ---------- подвал выпуска: ссылка + подпись ---------- */
+
+.issue-foot {
   column-span: all;
   margin-top: 28px;
   padding-top: 14px;
   border-top: 1px solid var(--rule);
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.issue-sign {
   font-style: italic;
   font-size: 0.95rem;
   color: var(--text-dim);
+  margin-left: auto;
+}
+
+.copy-link {
+  appearance: none;
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 8px 16px;
+  font-family: var(--caps);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: color 0.4s ease, border-color 0.4s ease;
+}
+.copy-link:hover { color: var(--accent); border-color: var(--accent); }
+.copy-link.done { color: var(--accent); border-color: var(--accent); }
+
+.issue:target,
+.issue.flash {
+  animation: issueFlash 1.6s ease;
+}
+@keyframes issueFlash {
+  0%   { box-shadow: 0 0 0 2px var(--accent), var(--shadow); }
+  100% { box-shadow: 0 0 0 2px transparent, var(--shadow); }
+}
+.issue { scroll-margin-top: 20px; }
+
+/* ---------- траурный выпуск ---------- */
+
+.issue-mourning {
+  border-style: solid;
+  border-width: clamp(7px, 1.6vw, 13px);
+  box-shadow: inset 0 0 0 1px var(--rule-soft), var(--shadow);
+}
+html[data-theme="light"] .issue-mourning { border-color: #1b1712; }
+html[data-theme="dark"]  .issue-mourning { border-color: #3a0812; }
+
+/* ---------- экстренный выпуск: штамп ---------- */
+
+.issue > summary { position: relative; }
+
+.stamp {
+  position: absolute;
+  top: clamp(14px, 3vw, 22px);
+  right: clamp(14px, 4vw, 36px);
+  transform: rotate(-4deg);
+  border: 2px double var(--accent);
+  border-radius: 2px;
+  padding: 6px 12px;
+  font-family: var(--caps);
+  font-size: clamp(0.6rem, 1.6vw, 0.72rem);
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.85;
+  pointer-events: none;
+}
+@media (max-width: 700px) {
+  .stamp {
+    position: static;
+    display: inline-block;
+    margin-bottom: 12px;
+    transform: rotate(-2deg);
+  }
+}
+
+/* ---------- частные объявления ---------- */
+
+.ads {
+  column-span: all;
+  break-inside: avoid;
+  margin: 30px 0 6px;
+  border-top: 2px solid var(--rule);
+  border-bottom: 2px solid var(--rule);
+  padding: 16px 0 4px;
+}
+
+.ads-head {
+  text-align: center;
+  font-family: var(--caps);
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.ads-grid {
+  column-count: 3;
+  column-gap: clamp(18px, 3vw, 34px);
+  column-rule: 1px solid var(--rule-soft);
+}
+@media (max-width: 900px) { .ads-grid { column-count: 2; } }
+@media (max-width: 600px) { .ads-grid { column-count: 1; } }
+
+.ad {
+  break-inside: avoid;
+  font-size: 0.96rem;
+  line-height: 1.62;
+  color: var(--text-dim);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.ad:last-child { border-bottom: none; }
+
+.ad-lead {
+  font-family: var(--caps);
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-right: 6px;
 }
 
 /* орнамент-разделитель */
@@ -573,9 +702,11 @@ footer a:hover { border-bottom-color: var(--accent); }
 
   <p class="rubrics" lang="en">world &middot; weather &middot; finance &middot; lifestyle</p>
 
-  <!-- ▼▼▼ НАЧАЛО ВЫПУСКА — копируй блок целиком, чтобы добавить новый ▼▼▼ -->
-  <details class="issue" open>
+  <!-- новые выпуски добавляй сюда, сверху: свежий — первым -->
+
+  <details class="issue" id="times-1852-10-21">
     <summary>
+      <span class="stamp">Экстренный выпуск</span>
       <div class="issue-meta">
         <span class="date">21 октября 1852</span>
         <span>Выпуск № XXI</span>
@@ -594,6 +725,7 @@ footer a:hover { border-bottom-color: var(--accent); }
           <figcaption>Переулок близ Леман-стрит на рассвете.</figcaption>
         </figure>
 
+        <p class="kicker" lang="en">Pay attention</p>
         <p class="lead">Редакция долго воздерживалась от публикации, не желая тревожить общество в дни национального траура. Однако молчание сделалось преступлением против читателя. С ночи на 13 октября в приходах Уайтчепела, Шедуэлла и Спиталфилдса обнаружены тела шести подданных Ее Величества: трех мужчин, двух женщин и ребенка. Все — из числа беднейших. Все — найдены на рассвете, в переулках, отходящих от людных улиц.</p>
 
         <blockquote class="pull">
@@ -614,13 +746,128 @@ footer a:hover { border-bottom-color: var(--accent); }
           До поимки злодея мы советуем: не выходить после наступления темноты в одиночку; матерям — держать детей при себе с вечернего звона; хозяевам питейных заведений — провожать до дому припозднившихся гостей. Всякого, кто видел что-либо в означенные ночи, просят явиться в участок на Леман-стрит. Обещано вознаграждение в пятьдесят фунтов.
         </div>
 
+        <p class="kicker" lang="en">Your business is to be with us</p>
         <p>Империя оплакивает Королеву — и не смеет забывать о живых. «Таймс» будет следовать за этим делом до его конца, каким бы он ни был, и не позволит ни страху, ни суеверию, ни чиновничьему удобству занять место истины.</p>
 
-        <p class="issue-sign">Редакция «Таймс»</p>
+        <section class="ads">
+          <h3 class="ads-head">Частные объявления</h3>
+          <div class="ads-grid">
+            <p class="ad"><span class="ad-lead">Разыскивается.</span> Энн Кроули, девятнадцати лет, рыжая, в сером платье, не возвращалась домой с ночи на 16-е. Всякому, кто доставит известие, — три фунта. Спитал-сквер, 4, у миссис Кроули.</p>
+            <p class="ad"><span class="ad-lead">Требуется.</span> В дом на Портман-сквер — горничная не моложе двадцати пяти лет, тихого нрава, без родни в столице. Рекомендации от двух прежних мест обязательны. Жалованье превосходное. Обращаться письменно.</p>
+            <p class="ad"><span class="ad-lead">Продаётся.</span> Пара гнедых с упряжью, по случаю отъезда владельца за границу. Смотреть в конюшнях у Ковент-Гардена всякий день до полудня.</p>
+            <p class="ad"><span class="ad-lead">Уведомление.</span> Общество трезвости Уайтчепела извещает, что вечерние собрания переносятся на четыре часа пополудни ввиду ранней темноты и известных обстоятельств.</p>
+            <p class="ad"><span class="ad-lead">Утеряно.</span> Медальон серебряный, овальный, с прядью тёмных волос. Нашедшему — вознаграждение без вопросов. Оставить у аптекаря на Леман-стрит.</p>
+            <p class="ad"><span class="ad-lead">Врачебное.</span> Д-ръ Уэйнрайт принимает по нервическим расстройствам и бессоннице. Харли-стрит. Ночные визиты — по особому уговору.</p>
+          </div>
+        </section>
+
+        <div class="issue-foot">
+          <button class="copy-link" type="button">Ссылка на выпуск</button>
+          <p class="issue-sign">Редакция «Таймс»</p>
+        </div>
       </div>
     </div>
   </details>
-  <!-- ▲▲▲ КОНЕЦ ВЫПУСКА ▲▲▲ -->
+
+  <details class="issue issue-mourning" id="times-1852-10-13">
+    <summary>
+      <div class="issue-meta">
+        <span class="date">13 октября 1852</span>
+        <span>Выпуск № XIII</span>
+      </div>
+      <h2 class="issue-title">Скорбь нации: скоропостижная кончина Её Величества</h2>
+      <p class="issue-standfirst">Англия осиротела. Корона переходит к одиннадцатилетнему наследнику.</p>
+      <span class="issue-open-hint">Читать выпуск</span>
+    </summary>
+
+    <div class="issue-body">
+      <div class="columns">
+
+        <figure class="cut span-all">
+          <div class="plate">Гравюра</div>
+          <figcaption>Букингемский дворец при спущенных флагах.</figcaption>
+        </figure>
+
+        <p class="kicker" lang="en">Pay attention</p>
+        <p class="lead">С глубочайшим прискорбием и тяжелым сердцем редакция вынуждена исполнить свой самый горестный долг. Сегодня Лондон проснулся в тени невосполнимой утраты. Неумолимый ход времени нашей великой столицы замер под траурный звон колоколов собора Святого Павла. Позавчера, 11 октября, Ее Величество королева Виктория мирно отошла ко Господу в своих покоях в Букингемском дворце. Нация погрузилась в глубочайший траур.</p>
+
+        <blockquote class="pull">
+          «Таймс» — это голос самой Империи
+          <cite>13 октября 1852</cite>
+        </blockquote>
+
+        <p class="kicker" lang="en">In your best interest</p>
+        <p>Официальный бюллетень, подписанный консилиумом королевских врачей, называет причиной этой трагедии стремительно развившуюся «гнилую лихорадку». Мы призываем наших читателей сохранять благоразумие и не поддаваться пагубным слухам, которые, к нашему великому сожалению, уже начали циркулировать в обществе. Домыслы о вмешательстве радикальных элементов или иностранных агентов не делают чести тем, кто их распространяет, и Скотленд-Ярд уже предпринимает меры для пресечения подобных провокаций.</p>
+
+        <p>Однако мы не можем игнорировать серьезность положения, в котором оказалась Британская Империя. Корона переходит к Его Королевскому Высочеству принцу Альберту Эдуарду. Учитывая, что юному наследнику едва исполнилось одиннадцать лет, перед Парламентом встает беспрецедентный конституционный вызов. Сегодня утром обе палаты соберутся на экстренное заседание для обсуждения вопроса о Регентстве. От мудрости и сдержанности наших лордов и министров сейчас зависит стабильность всего государства.</p>
+
+        <p>Крайне важно, чтобы в эти темные дни порядок поддерживался неукоснительно. Поступают тревожные сообщения о брожении умов в промышленных районах Ист-Энда. В связи с этим лондонская полиция переведена на усиленный режим несения службы, дабы гарантировать безопасность добропорядочных граждан и сохранность их имущества.</p>
+
+        <p class="kicker" lang="en">Your business is to be with us</p>
+        <p>В часы тяжелейших испытаний для Короны и Отечества истинный британец должен опираться на проверенные факты, а не на праздные домыслы. «Таймс» продолжит беспристрастно информировать вас о решениях Парламента и шагах Правительства. Наш долг — оставаться непоколебимым маяком истины для Империи.</p>
+
+        <section class="ads">
+          <h3 class="ads-head">Частные объявления</h3>
+          <div class="ads-grid">
+            <p class="ad"><span class="ad-lead">Траурное.</span> Креп чёрный лионский, ленты, перчатки и вуали — в наличии без промедления. Мессрс. Джей и сыновья, Риджент-стрит. Приём заказов с семи утра.</p>
+            <p class="ad"><span class="ad-lead">Панихида.</span> Церковь Святого Матфея служит по Ее Величеству ежедневно в шесть часов пополудни до окончания государственного траура. Двери открыты для всякого сословия.</p>
+            <p class="ad"><span class="ad-lead">Уведомление.</span> Театр Её Величества извещает почтенную публику о закрытии сезона до особого объявления. Билеты подлежат возврату в кассе.</p>
+            <p class="ad"><span class="ad-lead">Портретное.</span> Гравированный портрет покойной Королевы, в раме и без, по подписке. Ателье на Стрэнде. Число оттисков ограничено.</p>
+            <p class="ad"><span class="ad-lead">Банковское.</span> Конторы Сити извещают о сокращённых часах приёма в дни траура. Векселя к погашению принимаются до полудня.</p>
+            <p class="ad"><span class="ad-lead">Требуется.</span> В дом близ Мэйфэр — двое лакеев в траурной ливрее, немедленно. Рост и осанка обязательны. Спрашивать управляющего.</p>
+          </div>
+        </section>
+
+        <div class="issue-foot">
+          <button class="copy-link" type="button">Ссылка на выпуск</button>
+          <p class="issue-sign">Редакция «Таймс»</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="issue" id="times-1852-10-04">
+    <summary>
+      <div class="issue-meta">
+        <span class="date">4 октября 1852</span>
+        <span>Выпуск № IV</span>
+      </div>
+      <h2 class="issue-title">Свежий выпуск! Господа, не проходите мимо!</h2>
+      <p class="issue-standfirst">Пока весь остальной Лондон ещё спит, наши печатные машины уже выковали для вас правду дня.</p>
+      <span class="issue-open-hint">Читать выпуск</span>
+    </summary>
+
+    <div class="issue-body">
+      <div class="columns">
+
+        <p class="kicker" lang="en">Pay attention</p>
+        <p class="lead">Взгляните на этот лист! Пока весь остальной Лондон еще спит, наши печатные машины уже выковали для вас правду дня! Что там пишут в других листках? Слухи? Сплетни? Пустые домыслы? Оставьте их зевакам!</p>
+
+        <blockquote class="pull">
+          «Таймс» — это голос самой Империи
+          <cite>4 октября 1852</cite>
+        </blockquote>
+
+        <p class="kicker" lang="en">In your best interest</p>
+        <p>Хотите знать, что решили в Парламенте до того, как об этом заговорят в клубах Сент-Джеймса? Желаете прочесть отчеты из далеких колоний, доставленные прямо с почтовых пароходов? У нас есть все! Самые точные цифры, самые смелые статьи, аналитика, перед которой склоняют головы министры!</p>
+
+        <p>Никакой желтизны, никакой чепухи — только то, что действительно важно. В этом номере — всё: от биржевых сводок до судебных хроник. Это не просто бумага, господа, это компас, который не даст вам сбиться с пути в мире большой политики и большого бизнеса!</p>
+
+        <p class="kicker" lang="en">Your business is to be with us</p>
+        <p>Станьте человеком, который знает всё, прежде чем остальные успеют открыть рот! «Таймс» — газета для тех, кто правит этим миром, и для тех, кто хочет понимать, как он устроен.</p>
+
+        <div class="notice">
+          <span class="notice-title">Подписка</span>
+          Годовая подписка с доставкой на дом принимается в конторе на Принтинг-Хаус-сквер и у всякого книготорговца столицы. Утренний лист подаётся к завтраку прежде почты.
+        </div>
+
+        <div class="issue-foot">
+          <button class="copy-link" type="button">Ссылка на выпуск</button>
+          <p class="issue-sign">Редакция «Таймс»</p>
+        </div>
+      </div>
+    </div>
+  </details>
 
   <svg class="flourish" viewBox="0 0 400 40" aria-hidden="true" focusable="false">
     <path d="M20,20 C70,20 90,6 120,14 C150,22 160,20 200,20 C240,20 250,22 280,14 C310,6 330,20 380,20"/>
@@ -628,26 +875,6 @@ footer a:hover { border-bottom-color: var(--accent); }
     <path d="M280,14 C292,26 308,30 322,24 C336,18 334,6 322,8 C312,10 316,22 328,20"/>
     <rect class="gem" x="196" y="16" width="8" height="8" transform="rotate(45 200 20)"/>
   </svg>
-
-  <details class="issue">
-    <summary>
-      <div class="issue-meta">
-        <span class="date">14 октября 1852</span>
-        <span>Выпуск № XX</span>
-      </div>
-      <h2 class="issue-title">Империя в трауре: вопрос о Регентстве не разрешен</h2>
-      <p class="issue-standfirst">Парламент заседает третьи сутки. Наследнику престола одиннадцать лет.</p>
-      <span class="issue-open-hint">Читать выпуск</span>
-    </summary>
-
-    <div class="issue-body">
-      <div class="columns">
-        <p class="lead">Здесь начинается текст выпуска. Первая буква абзаца становится буквицей сама — достаточно оставить у абзаца класс lead.</p>
-        <p>Обычные абзацы пишутся без всяких классов. Текст сам разложится на две колонки на широком экране и в одну — на телефоне.</p>
-        <p class="issue-sign">Редакция «Таймс»</p>
-      </div>
-    </div>
-  </details>
 
 </section>
 
@@ -658,7 +885,9 @@ footer a:hover { border-bottom-color: var(--accent); }
 
   <p class="rubrics">Капитул &middot; Угодья &middot; Долги &middot; Объявления</p>
 
-  <details class="issue" open>
+  <!-- новые оттиски добавляй сюда, сверху -->
+
+  <details class="issue" id="albion-1852-10-21">
     <summary>
       <div class="issue-meta">
         <span class="date">21 октября 1852</span>
@@ -679,15 +908,156 @@ footer a:hover { border-bottom-color: var(--accent); }
           <cite>из речи в Капитуле</cite>
         </blockquote>
 
-        <p class="kicker">Угодья</p>
-        <p>Уайтчепел, Шедуэлл и Спиталфилдс закрыты для охоты до особого распоряжения. Неофитам, чьи наставники не поручились за них лично, предписано кормиться исключительно в стенах клуба.</p>
+        <p class="kicker">Что видят смертные</p>
+        <p>Пока — безумца из частного дома для умалишенных либо моряка, повредившегося рассудком в дальнем плавании. Инспектор, ведущий розыск, уверен в единственном виновнике, и в этом он, к несчастью для нас, прав. Хуже другое: полицейский хирург отказался говорить с газетой, а приход служил при закрытых гробах. Оба поступка означают, что увиденное не укладывается в версию, которую Ярд предлагает публике. Люди умеют не верить собственным отчётам дольше, чем принято думать, но не бесконечно.</p>
+
+        <p class="kicker">Чего Капитул не потерпит</p>
+        <p>Уайтчепел, Шедуэлл и Спиталфилдс закрыты. Всякий, кто выйдет за стол в этих приходах прежде отмены запрета, будет считаться не голодным, а неподчинившимся, и разница между этими словами измеряется в способе казни. Неофитам, чьи наставники не поручились за них лично, предписано кормиться исключительно в стенах клуба. Магистрам — проверить своих питомцев и своих должников: тело, найденное на рассвете в переулке, чаще всего означает, что кто-то не довёл начатое до подвала.</p>
+
+        <p class="kicker">Об Ордене</p>
+        <p>Напоминаем то, что молодым кажется преувеличением. Всякая газетная строка о звере читается не только в клубах Сент-Джеймса. Под собором Святого Павла её читают внимательнее нас, и там давно ждут именно такого повода. Шесть тел в трёх приходах — это карта, любезно отпечатанная тиражом в сорок тысяч экземпляров.</p>
 
         <div class="notice">
           <span class="notice-title">К сведению</span>
           Всякий, кому известно имя, обязан назвать его Магистру своего круга до третьей ночи. Умолчание будет расценено как соучастие.
         </div>
 
-        <p class="issue-sign">По воле Высшего круга</p>
+        <section class="ads">
+          <h3 class="ads-head">Объявления Капитула</h3>
+          <div class="ads-grid">
+            <p class="ad"><span class="ad-lead">Угодья.</span> Уайтчепел, Шедуэлл, Спиталфилдс закрыты до особого распоряжения. Нарушение границ приравнивается к охоте на чужой земле.</p>
+            <p class="ad"><span class="ad-lead">Долг.</span> За домом Хартли числится вторая просрочка. Кредиторам надлежит воздержаться от самостоятельных мер до решения Магистров.</p>
+            <p class="ad"><span class="ad-lead">Вызов.</span> Неофитам первого десятилетия явиться в Капитул в ночь на пятницу. Наставникам присутствовать при своих.</p>
+            <p class="ad"><span class="ad-lead">Ищется.</span> Служащий архива Тауэра, отпущенный без объяснений 12-го числа. Живым. Настоятельно — живым.</p>
+            <p class="ad"><span class="ad-lead">Питомцы.</span> Двое из числа приглашённых более не допускаются к ночным приёмам. Имена сообщены привратнику.</p>
+            <p class="ad"><span class="ad-lead">Приобретается.</span> Городской дом с глухим подвалом, к западу от парка, без соседей по стене. Расчёт немедленный, через смертного поверенного.</p>
+          </div>
+        </section>
+
+        <div class="issue-foot">
+          <button class="copy-link" type="button">Ссылка на выпуск</button>
+          <p class="issue-sign">По воле Высшего круга</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="issue issue-mourning" id="albion-1852-10-13">
+    <summary>
+      <div class="issue-meta">
+        <span class="date">13 октября 1852</span>
+        <span>Оттиск для членов клуба</span>
+      </div>
+      <h2 class="issue-title">Мы оплакиваем не королеву</h2>
+      <p class="issue-standfirst">Пятнадцать лет работы у трона окончились за одну ночь. Наследнику одиннадцать.</p>
+      <span class="issue-open-hint">Читать выпуск</span>
+    </summary>
+
+    <div class="issue-body">
+      <div class="columns">
+
+        <p class="lead">Утренний лист сообщает Империи о «гнилой лихорадке» и призывает к благоразумию. Мы возьмём из этого листа только одно: бюллетень подписан консилиумом, а значит, ни один из наших врачей при дворе не был отстранён и ни одна дверь пока не закрылась. Всё прочее в газете написано для тех, кто платит пенни.</p>
+
+        <blockquote class="pull">
+          «Скорбь дозволена. Радость — нет»
+          <cite>из распоряжения Высшего круга</cite>
+        </blockquote>
+
+        <p class="kicker">Что мы потеряли</p>
+        <p>Пятнадцать лет ушло на то, чтобы обвить корону так, что она перестала это замечать: колониальные поставки, назначения, тишина вокруг исчезновений. Всё это держалось на живой женщине, к которой у нас был подход. Женщины больше нет. Хартии остались, а рука, что их подписывала, остыла — и всякий, кто скажет, будто это малая перемена, пусть скажет это в Капитуле вслух.</p>
+
+        <p class="kicker">Что мы можем взять</p>
+        <p>Наследнику одиннадцать лет. За право стать при нём наставником сейчас передерутся все, кому есть что предложить регентскому совету, и в этой драке мы участвуем не первыми, а последними — когда прочие ослабнут. Ребёнок, чья воля ещё не отвердела, стоит дороже старой королевы: её приходилось убеждать, его достаточно будет вырастить. Терпение здесь дороже золота, а золото у нас есть.</p>
+
+        <p class="kicker">Чего не делать</p>
+        <p>Три ночи никто из членов клуба не выходит на охоту западнее Сити и не показывается в местах увеселений: Лондон в трауре, и всякое веселье будет замечено. Смертным членам клуба надлежит скорбеть громко, жертвовать щедро и хлопотать о местах в регентском совете. Питомцев на приёмы не приглашать до особого распоряжения — вид крови в дни национального траура развязывает языки даже самым покорным.</p>
+
+        <div class="notice">
+          <span class="notice-title">К сведению</span>
+          Со смертью Её Величества из королевского кабинета исчез документ, касающийся всех присутствующих. Оттиск об этом разослан отдельно и подлежит уничтожению по прочтении.
+        </div>
+
+        <div class="issue-foot">
+          <button class="copy-link" type="button">Ссылка на выпуск</button>
+          <p class="issue-sign">По воле Высшего круга</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="issue" id="albion-1852-10-12">
+    <summary>
+      <span class="stamp">Экстренный оттиск</span>
+      <div class="issue-meta">
+        <span class="date">12 октября 1852</span>
+        <span>Уничтожить по прочтении</span>
+      </div>
+      <h2 class="issue-title">Пропажа из королевского кабинета</h2>
+      <p class="issue-standfirst">Реестр не найден. Каждая ночь промедления работает против рода.</p>
+      <span class="issue-open-hint">Читать выпуск</span>
+    </summary>
+
+    <div class="issue-body">
+      <div class="columns">
+
+        <p class="lead">В ночь, когда Её Величество умирала, из королевского кабинета вынесли реестр в чёрном переплёте. Читающему нет нужды объяснять, что в нём: расписки, земельные хартии и протоколы тайной полиции, из которых следует, что верхушка Палаты лордов не менялась со времён чумы. Это не компрометирующая бумага. Это доказательство существования вида.</p>
+
+        <blockquote class="pull">
+          «Книгу вернуть. Всё остальное — второстепенно»
+          <cite>решение Высшего круга, единогласно</cite>
+        </blockquote>
+
+        <p class="kicker">Сроки</p>
+        <p>Регентский совет назначит аудит дворцовых архивов, как только разрешится вопрос о Регентстве. Столько времени у нас и есть: недели, а не месяцы. Если книга к тому дню не ляжет обратно в кабинет или не сгорит, её отсутствие заметят и начнут искать те, у кого для поисков есть Империя.</p>
+
+        <p class="kicker">Кто мог</p>
+        <p>Замки вынесены с мясом — значит, брал не лакей. Круг лиц, знавших о существовании реестра, невелик, и в нём есть наши. Магистрам предписано в трёхдневный срок отчитаться о местонахождении всех своих смертных поверенных в ночь на 11-е. Отговорка «человек мой предан» была услышана Капитулом достаточно раз, чтобы более не приниматься.</p>
+
+        <p class="kicker">Условия розыска</p>
+        <p>Свидетелей — не убивать до допроса. Тела в переулках не помогают искать книгу, а лишь ускоряют внимание Ярда к нашим угодьям. Всякому, кто доставит реестр в Капитул нераскрытым, обещано снятие всех долгов перед клубом и место в Исполнительном совете. Всякому, кто откроет его прежде, — то, что обещано за такое всегда.</p>
+
+        <div class="issue-foot">
+          <button class="copy-link" type="button">Ссылка на выпуск</button>
+          <p class="issue-sign">По воле Высшего круга</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="issue" id="albion-1852-10-04">
+    <summary>
+      <div class="issue-meta">
+        <span class="date">4 октября 1852</span>
+        <span>Оттиск для членов клуба</span>
+      </div>
+      <h2 class="issue-title">Читайте их газеты</h2>
+      <p class="issue-standfirst">Сезон открыт, угодья расписаны, при дворе покойно. Ничто не предвещает перемен.</p>
+      <span class="issue-open-hint">Читать выпуск</span>
+    </summary>
+
+    <div class="issue-body">
+      <div class="columns">
+
+        <p class="lead">Сегодня утром мальчишки на Стрэнде кричали, что «Таймс» — голос самой Империи. Мальчишки правы, и потому оттиск начинается с напоминания, которое старшим кажется скучным: утренний лист надлежит читать всякому члену клуба, и читать прежде завтрака. Не ради новостей. Ради того, чтобы знать, во что сегодня верит стадо.</p>
+
+        <blockquote class="pull">
+          «Их правда дня — наше расписание на ночь»
+          <cite>из наставления неофитам</cite>
+        </blockquote>
+
+        <p class="kicker">Отчего это важно</p>
+        <p>Газета сообщает, где нынче стоит полиция, чьи конторы разорились, кто уехал за границу и чей дом опустел до весны. Она же исправно объясняет читателю всякую нашу оплошность: обескровленное тело — маньяк, вырванный замок — гидравлика налётчиков, прыжок через улицу — дурной опиум. Пока смертные сами придумывают нам оправдания, нам довольно не мешать им в этом.</p>
+
+        <p class="kicker">Сезон</p>
+        <p>Угодья на осень расписаны и вывешены в Капитуле. Театр Её Величества открыт, ложи закреплены за прежними домами. Приёмы для питомцев — по четвергам, как заведено. Неофитам напоминают: в партере сидит корм, в ложах сидят те, кого мы называем друзьями, и путать их не следует ни в речи, ни в манерах.</p>
+
+        <p class="kicker">При дворе</p>
+        <p>Спокойно. Наши люди при кабинете на своих местах, поставки из колоний идут прежним порядком, вопросов к клубу нет ни у Уайтхолла, ни у Ярда. Пятнадцать лет труда приносят плоды тихо, как и надлежит. Ничто не предвещает перемен, а значит, лучшее, что может сделать всякий из нас в этот сезон, — не делать ничего примечательного.</p>
+
+        <div class="issue-foot">
+          <button class="copy-link" type="button">Ссылка на выпуск</button>
+          <p class="issue-sign">По воле Высшего круга</p>
+        </div>
       </div>
     </div>
   </details>
@@ -699,32 +1069,14 @@ footer a:hover { border-bottom-color: var(--accent); }
     <rect class="gem" x="196" y="16" width="8" height="8" transform="rotate(45 200 20)"/>
   </svg>
 
-  <details class="issue">
-    <summary>
-      <div class="issue-meta">
-        <span class="date">12 октября 1852</span>
-        <span>Оттиск для членов клуба</span>
-      </div>
-      <h2 class="issue-title">Пропажа из королевского кабинета</h2>
-      <p class="issue-standfirst">Реестр не найден. Каждая ночь промедления работает против рода.</p>
-      <span class="issue-open-hint">Читать выпуск</span>
-    </summary>
-
-    <div class="issue-body">
-      <div class="columns">
-        <p class="lead">Место для текста выпуска.</p>
-        <p class="issue-sign">По воле Высшего круга</p>
-      </div>
-    </div>
-  </details>
-
 </section>
 
 <!-- =========================================================
      ШАБЛОН ВЫПУСКА — СКОПИРУЙ И ВСТАВЬ ВНУТРЬ НУЖНОЙ ВКЛАДКИ
 
-<details class="issue" open>   ← open = выпуск раскрыт сразу; убери слово open, чтобы был свёрнут
+<details class="issue" id="times-1852-11-03">   ← id обязателен: по нему работает ссылка на выпуск
   <summary>
+    <span class="stamp">Экстренный выпуск</span>   ← необязательно, штамп наискось
     <div class="issue-meta">
       <span class="date">ДАТА</span>
       <span>ПОДПИСЬ СПРАВА</span>
@@ -758,12 +1110,29 @@ footer a:hover { border-bottom-color: var(--accent); }
         Текст объявления в рамке.
       </div>
 
-      <p class="issue-sign">Подпись редакции</p>
+      <section class="ads">
+        <h3 class="ads-head">Частные объявления</h3>
+        <div class="ads-grid">
+          <p class="ad"><span class="ad-lead">Разыскивается.</span> Текст объявления.</p>
+          <p class="ad"><span class="ad-lead">Требуется.</span> Текст объявления.</p>
+          <p class="ad"><span class="ad-lead">Продаётся.</span> Текст объявления.</p>
+        </div>
+      </section>
+
+      <div class="issue-foot">
+        <button class="copy-link" type="button">Ссылка на выпуск</button>
+        <p class="issue-sign">Подпись редакции</p>
+      </div>
     </div>
   </div>
 </details>
 
      ПОЛЕЗНОЕ:
+     • id выпуска — латиницей, без пробелов. Схема: times-ГОД-МЕСЯЦ-ЧИСЛО
+       для людей и albion-ГОД-МЕСЯЦ-ЧИСЛО для вампиров.
+     • траурная рамка: <details class="issue issue-mourning" id="...">
+     • экстренный выпуск: <span class="stamp">Экстренный выпуск</span> первой строкой в summary
+     • раскрыть выпуск сразу: <details class="issue" open id="...">
      • class="span-all" на любом блоке растягивает его на обе колонки
      • картинка: <figure class="cut"><img src="..." alt=""><figcaption>...</figcaption></figure>
      • пустая рамка вместо картинки: <div class="plate">Гравюра</div>
@@ -823,12 +1192,76 @@ footer a:hover { border-bottom-color: var(--accent); }
     });
   });
 
-  var startId = location.hash.slice(1);
-  if (META[startId]) activate(startId, false);
+  /* ---------- ссылка на отдельный выпуск ---------- */
 
-  window.addEventListener('hashchange', function () {
-    var id = location.hash.slice(1);
-    if (META[id]) activate(id, false);
+  function openIssue(id) {
+    var el = id && document.getElementById(id);
+    if (!el || !el.classList.contains('issue')) return false;
+
+    var section = el.closest('.edition');
+    if (section) activate(section.id, false);
+
+    el.open = true;
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+
+    setTimeout(function () {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 160);
+    return true;
+  }
+
+  function goByHash(hash) {
+    var id = (hash || '').replace(/^#/, '');
+    if (META[id]) { activate(id, false); return; }
+    openIssue(id);
+  }
+
+  goByHash(location.hash);
+  window.addEventListener('hashchange', function () { goByHash(location.hash); });
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy') ? resolve() : reject(); }
+      catch (err) { reject(err); }
+      document.body.removeChild(ta);
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('.copy-link');
+    if (!btn) return;
+
+    var issue = btn.closest('.issue');
+    if (!issue || !issue.id) return;
+
+    var url = location.origin + location.pathname + '#' + issue.id;
+    var original = btn.dataset.label || btn.textContent;
+    btn.dataset.label = original;
+
+    copyText(url).then(function () {
+      btn.textContent = 'Ссылка скопирована';
+      btn.classList.add('done');
+    }).catch(function () {
+      btn.textContent = url;
+    });
+
+    clearTimeout(btn._t);
+    btn._t = setTimeout(function () {
+      btn.textContent = btn.dataset.label;
+      btn.classList.remove('done');
+    }, 2200);
   });
 
   /* ---------- кнопка «наверх» ---------- */
