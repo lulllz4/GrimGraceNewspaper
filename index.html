@@ -11,52 +11,54 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+SC:wght@400;500;600&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cormorant+SC:wght@400;500;600&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
 
 <script>document.documentElement.classList.add('js');</script>
 
 <style>
 /* =========================================================
-   ТОКЕНЫ ТЕМ
-   светлая = издание для людей, тёмная = издание для вампиров
+   ТОКЕНЫ
+   светлая тема = издание для людей, тёмная = для вампиров
    ========================================================= */
 
 :root {
-  --shadow: 0 24px 60px rgba(0,0,0,0.35);
-  --serif: 'Cormorant Garamond', 'Times New Roman', serif;
-  --caps:  'Cormorant SC', 'Cormorant Garamond', serif;
-  --black: 'UnifrakturMaguntia', 'Cormorant SC', serif;
+  --serif:   'Cormorant Garamond', 'Times New Roman', serif;  /* корпус статей */
+  --display: 'Old Standard TT', 'Times New Roman', serif;      /* заголовки */
+  --caps:    'Cormorant SC', 'Cormorant Garamond', serif;      /* рубрики, метки */
+  --black:   'UnifrakturMaguntia', 'Old Standard TT', serif;   /* логотип */
+  --wrap:    1000px;
+  --gutter:  clamp(14px, 3vw, 22px);
 }
 
 html[data-theme="light"] {
   --bg:        #ddd5c2;
-  --bg-deep:   #cbc2ad;
   --paper:     #f7f3e9;
   --paper-alt: #f1ebdc;
   --text:      #211d16;
   --text-dim:  #6d6455;
   --accent:    #8c6a1c;
   --accent-hi: #b8912f;
-  --accent-lo: #e2d3a8;
-  --rule:      rgba(140, 106, 28, 0.30);
-  --rule-soft: rgba(33, 29, 22, 0.14);
+  --rule:      rgba(140, 106, 28, 0.34);
+  --rule-soft: rgba(33, 29, 22, 0.16);
+  --mourn:     #1b1712;
   --halo:      rgba(255, 246, 214, 0.85);
+  --shadow:    0 18px 50px rgba(60, 45, 20, 0.22);
   --noise:     0.035;
 }
 
 html[data-theme="dark"] {
   --bg:        #070508;
-  --bg-deep:   #030203;
   --paper:     #100b0e;
   --paper-alt: #150e12;
   --text:      #c9bfb4;
   --text-dim:  #7d746c;
   --accent:    #a11b31;
   --accent-hi: #c02540;
-  --accent-lo: #3a0812;
-  --rule:      rgba(161, 27, 49, 0.30);
-  --rule-soft: rgba(201, 191, 180, 0.12);
+  --rule:      rgba(161, 27, 49, 0.32);
+  --rule-soft: rgba(201, 191, 180, 0.13);
+  --mourn:     #3a0812;
   --halo:      rgba(110, 15, 31, 0.16);
+  --shadow:    0 18px 50px rgba(0, 0, 0, 0.55);
   --noise:     0.05;
 }
 
@@ -65,11 +67,11 @@ html[data-theme="dark"] {
 html {
   scroll-behavior: smooth;
   scrollbar-width: thin;
-  scrollbar-color: var(--accent-lo) var(--bg);
+  scrollbar-color: var(--rule) var(--bg);
+  -webkit-text-size-adjust: 100%;
 }
 ::-webkit-scrollbar { width: 10px; background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--accent-lo); border-radius: 5px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 5px; }
 
 body {
   background: var(--bg);
@@ -82,15 +84,20 @@ body {
 }
 
 ::selection { background: var(--accent); color: var(--paper); }
-
 a { color: var(--accent); }
+:focus-visible { outline: 1px solid var(--accent-hi); outline-offset: 3px; }
 
-:focus-visible {
-  outline: 1px solid var(--accent-hi);
-  outline-offset: 3px;
+/* разрядка вместо курсива — <span class="sp">слово</span> */
+.sp { letter-spacing: 0.2em; }
+
+.wrap {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
 }
 
-/* ---------- атмосфера: зерно бумаги + свет/сумрак ---------- */
+/* ---------- атмосфера ---------- */
 
 body::before {
   content: '';
@@ -128,410 +135,502 @@ header {
   position: relative;
   z-index: 5;
   text-align: center;
-  padding: clamp(46px, 9vh, 88px) 20px 0;
-}
-
-.eyebrow {
-  font-family: var(--caps);
-  font-size: 0.72rem;
-  letter-spacing: 0.5em;
-  text-indent: 0.5em;
-  text-transform: uppercase;
-  color: var(--text-dim);
+  padding-top: clamp(28px, 6vh, 70px);
 }
 
 .masthead {
   font-family: var(--black);
   font-weight: 400;
-  font-size: clamp(3rem, 11vw, 7.5rem);
+  font-size: clamp(2.6rem, 12vw, 7rem);
   line-height: 1;
-  margin: 14px 0 10px;
   color: var(--text);
-  letter-spacing: 0.02em;
+  margin-bottom: clamp(12px, 2.5vh, 20px);
 }
 
-.masthead-rules {
-  max-width: 1080px;
-  margin: 0 auto;
-  border-top: 2px solid var(--rule);
+.dateline {
+  border-top: 3px solid var(--rule);
   border-bottom: 1px solid var(--rule);
   padding: 9px 0;
   display: flex;
-  justify-content: center;
-  gap: clamp(12px, 4vw, 40px);
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
   font-family: var(--caps);
-  font-size: 0.72rem;
-  letter-spacing: 0.28em;
-  text-indent: 0.28em;
+  font-size: clamp(0.54rem, 2vw, 0.72rem);
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text-dim);
+  white-space: nowrap;
 }
-.masthead-rules span { white-space: nowrap; }
+.dateline .mid { color: var(--text); letter-spacing: 0.16em; }
 
-/* ================= ПЕРЕКЛЮЧАТЕЛЬ ИЗДАНИЙ ================= */
+/* ================= ВЫБОР ИЗДАНИЯ ================= */
 
 nav.editions {
-  position: relative;
-  z-index: 5;
-  max-width: 1080px;
-  margin: clamp(26px, 5vh, 48px) auto 0;
-  padding: 0 20px;
   display: flex;
   justify-content: center;
-  gap: clamp(10px, 3vw, 26px);
+  border-bottom: 1px solid var(--rule);
 }
 
 .edition-btn {
   appearance: none;
   background: none;
-  border: 1px solid transparent;
-  border-radius: 2px;
+  border: none;
   cursor: pointer;
-  padding: 14px clamp(14px, 3vw, 30px);
+  position: relative;
+  flex: 0 1 auto;
+  padding: 13px clamp(12px, 5vw, 40px);
   font-family: var(--caps);
-  font-size: clamp(0.78rem, 2.4vw, 0.95rem);
+  font-size: clamp(0.72rem, 3vw, 0.9rem);
   letter-spacing: 0.2em;
   text-indent: 0.2em;
   color: var(--text-dim);
-  transition: color 0.5s ease, border-color 0.5s ease, background 0.5s ease;
+  transition: color 0.45s ease;
 }
+.edition-btn + .edition-btn { border-left: 1px solid var(--rule-soft); }
 .edition-btn .sub {
   display: block;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-size: clamp(0.6rem, 2.4vw, 0.72rem);
+  letter-spacing: 0.04em;
   text-indent: 0;
   opacity: 0.7;
-  margin-top: 4px;
+  margin-top: 3px;
 }
-.edition-btn:hover { color: var(--text); }
-.edition-btn.active {
-  color: var(--text);
-  border-color: var(--rule);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
+.edition-btn:hover,
+.edition-btn.active { color: var(--text); }
+.edition-btn.active::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 3px;
+  background: var(--accent);
 }
 
-/* ================= ЛЕНТА ВЫПУСКОВ ================= */
+/* ================= ЛИСТ ================= */
 
 main {
   position: relative;
   z-index: 5;
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: clamp(34px, 6vh, 64px) 20px 40px;
+  padding-top: clamp(22px, 4vh, 46px);
+  padding-bottom: 40px;
 }
 
 .edition { display: none; }
-.edition.active { display: block; animation: editionIn 0.8s ease both; }
+.edition.active { display: block; animation: editionIn 0.7s ease both; }
 @keyframes editionIn {
-  from { opacity: 0; transform: translateY(14px); filter: blur(4px); }
-  to   { opacity: 1; transform: none; filter: blur(0); }
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.sheet {
+  background: var(--paper);
+  border: 1px solid var(--rule-soft);
+  box-shadow: var(--shadow);
+  padding: clamp(16px, 4vw, 50px);
+  transition: background 0.9s ease;
 }
 
 .rubrics {
   text-align: center;
   font-family: var(--caps);
-  font-size: 0.68rem;
-  letter-spacing: 0.34em;
-  text-indent: 0.34em;
+  font-size: clamp(0.52rem, 2vw, 0.66rem);
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
   text-transform: uppercase;
   color: var(--text-dim);
   border-bottom: 1px solid var(--rule);
-  padding-bottom: 14px;
-  margin-bottom: clamp(28px, 5vh, 48px);
+  padding-bottom: 12px;
 }
 
-/* ---------- лист газеты ---------- */
+/* ---------- первая полоса ---------- */
 
-.issue {
-  background: var(--paper);
-  border: 1px solid var(--rule-soft);
-  box-shadow: var(--shadow);
-  margin-bottom: clamp(30px, 6vh, 56px);
-  transition: background 0.9s ease, border-color 0.9s ease;
+.front {
+  position: relative;
+  padding-top: clamp(18px, 4vw, 30px);
 }
 
-.issue > summary {
-  display: block;
-  list-style: none;
-  cursor: pointer;
-  padding: clamp(18px, 4vw, 26px) clamp(18px, 5vw, 44px);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.4s ease;
-}
-.issue > summary::-webkit-details-marker { display: none; }
-.issue[open] > summary { border-bottom-color: var(--rule); }
-
-.issue-meta {
+.front-meta {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 10px;
   font-family: var(--caps);
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
+  font-size: clamp(0.56rem, 2.2vw, 0.68rem);
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--text-dim);
 }
-.issue-meta .date { color: var(--accent); }
+.front-meta .date { color: var(--accent); }
 
-.issue-title {
-  font-family: var(--caps);
-  font-weight: 600;
-  font-size: clamp(1.4rem, 4.6vw, 2.35rem);
-  line-height: 1.25;
-  letter-spacing: 0.04em;
-  margin-top: 12px;
+.hed {
+  font-family: var(--display);
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: clamp(1.65rem, 6.6vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: 0.005em;
   color: var(--text);
-  transition: color 0.4s ease;
+  margin: clamp(14px, 3vw, 22px) 0 0;
+  text-wrap: balance;
 }
-.issue > summary:hover .issue-title { color: var(--accent); }
 
-.issue-standfirst {
+.deck {
+  max-width: 44ch;
+  margin: 0 auto;
+  text-align: center;
+  text-wrap: balance;
+}
+.deck-1 {
+  font-family: var(--display);
+  font-size: clamp(1rem, 3.3vw, 1.3rem);
+  line-height: 1.35;
+  color: var(--text);
+  margin-top: clamp(12px, 2.6vw, 18px);
+  padding-top: clamp(12px, 2.6vw, 18px);
+  border-top: 1px solid var(--rule);
+}
+.deck-2 {
+  font-family: var(--display);
   font-style: italic;
-  font-size: clamp(1rem, 2.6vw, 1.15rem);
+  font-size: clamp(0.95rem, 3vw, 1.1rem);
+  line-height: 1.5;
   color: var(--text-dim);
-  margin-top: 8px;
-  max-width: 62ch;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule-soft);
 }
 
-.issue-open-hint {
-  display: block;
-  margin-top: 14px;
+.front-grid {
+  display: grid;
+  gap: clamp(18px, 3vw, 34px);
+  margin-top: clamp(20px, 4vw, 32px);
+}
+@media (min-width: 920px) {
+  .front-grid { grid-template-columns: minmax(0, 1fr) 236px; }
+  .rail { border-left: 1px solid var(--rule); padding-left: clamp(16px, 2vw, 26px); }
+}
+@media (max-width: 919px) {
+  .rail { border-top: 3px double var(--rule); padding-top: 16px; }
+}
+
+/* ---------- боковая колонка ---------- */
+
+.rail-box + .rail-box {
+  border-top: 1px solid var(--rule-soft);
+  margin-top: 15px;
+  padding-top: 15px;
+}
+.rail-head {
   font-family: var(--caps);
-  font-size: 0.66rem;
+  font-weight: 500;
+  font-size: 0.68rem;
   letter-spacing: 0.24em;
+  text-indent: 0.24em;
   text-transform: uppercase;
   color: var(--accent);
-  opacity: 0.75;
+  text-align: center;
+  margin-bottom: 10px;
 }
-.issue[open] .issue-open-hint { display: none; }
+.rail p {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+.rail p + p { margin-top: 9px; }
+.brief-lead {
+  font-family: var(--caps);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-right: 5px;
+}
+.figures { font-size: 0.93rem; }
+.figures > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding: 3px 0;
+  border-bottom: 1px dotted var(--rule-soft);
+}
+.figures > div:last-child { border-bottom: none; }
+.figures dt { color: var(--text-dim); }
+.figures dd { color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-/* ---------- тело выпуска ---------- */
+/* штамп «экстренный выпуск» */
+.stamp {
+  position: absolute;
+  top: clamp(16px, 3vw, 26px);
+  right: 0;
+  transform: rotate(-4deg);
+  border: 2px double var(--accent);
+  padding: 5px 11px;
+  font-family: var(--caps);
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.85;
+  pointer-events: none;
+}
+@media (max-width: 780px) {
+  .stamp {
+    position: static;
+    display: inline-block;
+    transform: rotate(-2deg);
+    margin-bottom: 12px;
+    font-size: 0.6rem;
+  }
+}
+
+/* сургучная печать на оттиске «Альбиона» — удаляется одной строкой в разметке */
+.seal {
+  position: absolute;
+  top: 4px; right: 0;
+  width: 76px; height: 76px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 34% 28%, #7d1526, #45090f 72%);
+  box-shadow: inset 0 0 0 3px rgba(0,0,0,0.28), 0 5px 14px rgba(0,0,0,0.55);
+  font-family: var(--caps);
+  font-size: 1.6rem;
+  color: rgba(226, 198, 198, 0.72);
+  transform: rotate(-7deg);
+  pointer-events: none;
+  user-select: none;
+}
+@media (max-width: 780px) { .seal { display: none; } }
+
+/* ---------- подшивка ---------- */
+
+.archive {
+  border-top: 3px double var(--rule);
+  margin-top: clamp(26px, 5vw, 44px);
+}
+.archive-head {
+  text-align: center;
+  font-family: var(--caps);
+  font-weight: 500;
+  font-size: clamp(0.6rem, 2.4vw, 0.72rem);
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: clamp(12px, 2.5vw, 18px) 0;
+}
+
+.issue { border-top: 1px solid var(--rule-soft); }
+.issue:last-of-type { border-bottom: 1px solid var(--rule-soft); }
+
+.issue > summary {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: clamp(10px, 2.5vw, 22px);
+  padding: 15px 2px;
+  cursor: pointer;
+  list-style: none;
+}
+.issue > summary::-webkit-details-marker { display: none; }
+
+.idx-date {
+  font-family: var(--caps);
+  font-size: clamp(0.6rem, 2.4vw, 0.7rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.idx-title {
+  font-family: var(--display);
+  font-size: clamp(0.98rem, 3.4vw, 1.16rem);
+  line-height: 1.3;
+  color: var(--text);
+  transition: color 0.35s ease;
+}
+.issue > summary:hover .idx-title { color: var(--accent); }
+.idx-tag {
+  font-family: var(--caps);
+  font-size: 0.56rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--rule);
+  padding: 2px 6px;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+.idx-mark {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--accent);
+  transition: transform 0.4s ease;
+}
+.issue[open] .idx-mark { transform: rotate(45deg); }
+
+.issue-mourning {
+  border-left: 6px solid var(--mourn);
+  padding-left: clamp(8px, 2vw, 14px);
+}
 
 .issue-body {
-  padding: clamp(22px, 5vw, 44px);
-  animation: bodyIn 0.6s ease both;
+  padding: 4px 0 26px;
+  animation: bodyIn 0.5s ease both;
 }
 @keyframes bodyIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: none; }
 }
 
+.body-deck {
+  max-width: 46ch;
+  margin: 0 auto clamp(18px, 3vw, 26px);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule-soft);
+  text-align: center;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(0.95rem, 3vw, 1.1rem);
+  color: var(--text-dim);
+}
+
+/* ---------- плотный газетный набор ---------- */
+
 .columns {
   column-count: 2;
-  column-gap: clamp(24px, 4vw, 48px);
+  column-gap: clamp(22px, 4vw, 46px);
   column-rule: 1px solid var(--rule-soft);
 }
-@media (max-width: 760px) {
-  .columns { column-count: 1; }
-}
+@media (max-width: 760px) { .columns { column-count: 1; } }
 
-.columns p {
-  font-size: 1.08rem;
-  line-height: 1.78;
+.columns > p {
+  margin: 0;
+  font-size: clamp(1rem, 2.85vw, 1.07rem);
+  line-height: 1.62;
   text-align: justify;
   hyphens: auto;
-  margin-bottom: 1.15em;
+  text-indent: 1.4em;
+}
+@media (max-width: 760px) {
+  .columns > p { text-align: left; hyphens: none; }
 }
 
-.columns p.lead::first-letter {
-  font-family: var(--caps);
-  font-weight: 600;
-  font-size: 3.6em;
+/* абзацы после заголовков и врезок — без отступа первой строки */
+.columns > p:first-of-type,
+.columns > p.lead,
+.columns > .kicker + p,
+.columns > figure + p,
+.columns > .pull + p,
+.columns > .notice + p,
+.columns > .ads + p { text-indent: 0; }
+
+.columns > p.lead::first-letter {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 3.2em;
   float: left;
-  line-height: 0.78;
-  margin: 0.06em 0.1em 0 0;
+  line-height: 0.82;
+  margin: 0.04em 0.09em 0 0;
   color: var(--accent);
 }
 
-/* рубрика внутри статьи — как «| PAY ATTENTION !» в оригинале */
 .kicker {
   break-inside: avoid;
   font-family: var(--caps);
-  font-size: 0.74rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
+  text-indent: 0 !important;
+  text-align: left !important;
   color: var(--accent);
   border-top: 1px solid var(--rule);
-  padding-top: 10px;
-  margin: 22px 0 12px;
+  padding-top: 9px;
+  margin: 18px 0 10px !important;
 }
-.kicker::before { content: '| '; opacity: 0.6; }
+.kicker::before { content: '| '; opacity: 0.55; }
 
-/* врезка-цитата */
 .pull {
   break-inside: avoid;
-  margin: 22px 0;
-  padding: 16px 0;
+  margin: 20px 0;
+  padding: 15px 0;
   border-top: 2px solid var(--rule);
   border-bottom: 1px solid var(--rule);
-  font-family: var(--caps);
-  font-size: clamp(1.05rem, 2.6vw, 1.3rem);
-  line-height: 1.45;
+  font-family: var(--display);
+  font-size: clamp(1.02rem, 3.2vw, 1.26rem);
+  line-height: 1.42;
   text-align: center;
   color: var(--text);
 }
 .pull cite {
   display: block;
-  margin-top: 10px;
+  margin-top: 9px;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 0.95rem;
-  letter-spacing: 0.04em;
+  font-size: 0.92rem;
   color: var(--text-dim);
 }
 
-/* иллюстрация */
 figure.cut {
   break-inside: avoid;
-  margin: 0 0 20px;
+  margin: 0 0 18px;
   border: 1px solid var(--rule);
   background: var(--paper-alt);
 }
 figure.cut img {
   display: block;
   width: 100%;
-  height: clamp(150px, 26vw, 300px);
+  height: clamp(130px, 26vw, 300px);
   object-fit: cover;
 }
-html[data-theme="dark"] figure.cut img { filter: grayscale(45%) contrast(1.08) brightness(0.78); }
+html[data-theme="dark"]  figure.cut img { filter: grayscale(45%) contrast(1.08) brightness(0.78); }
 html[data-theme="light"] figure.cut img { filter: grayscale(65%) sepia(22%) contrast(1.05); }
 
 figure.cut .plate {
-  height: clamp(120px, 20vw, 220px);
+  height: clamp(110px, 20vw, 210px);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--caps);
-  font-size: 0.7rem;
-  letter-spacing: 0.3em;
+  font-size: 0.66rem;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--text-dim);
   background: repeating-linear-gradient(45deg, transparent, transparent 7px, var(--rule-soft) 7px, var(--rule-soft) 8px);
 }
 figure.cut figcaption {
-  padding: 9px 12px;
+  padding: 8px 11px;
   border-top: 1px solid var(--rule-soft);
   font-style: italic;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--text-dim);
 }
 
-/* широкий блок на всю ширину листа внутри колонок */
 .span-all { column-span: all; }
 
-/* объявления, мелочи, курсы, погода */
 .notice {
   break-inside: avoid;
   border: 1px solid var(--rule);
-  padding: 14px 16px;
-  margin: 20px 0;
-  font-size: 1rem;
-  line-height: 1.7;
+  padding: 13px 15px;
+  margin: 18px 0;
+  font-size: 0.98rem;
+  line-height: 1.62;
   color: var(--text-dim);
 }
 .notice-title {
   display: block;
   font-family: var(--caps);
-  font-size: 0.72rem;
-  letter-spacing: 0.24em;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--accent);
-  margin-bottom: 8px;
-}
-
-/* ---------- подвал выпуска: ссылка + подпись ---------- */
-
-.issue-foot {
-  column-span: all;
-  margin-top: 28px;
-  padding-top: 14px;
-  border-top: 1px solid var(--rule);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.issue-sign {
-  font-style: italic;
-  font-size: 0.95rem;
-  color: var(--text-dim);
-  margin-left: auto;
-}
-
-.copy-link {
-  appearance: none;
-  background: none;
-  border: 1px solid var(--rule);
-  border-radius: 2px;
-  cursor: pointer;
-  padding: 8px 16px;
-  font-family: var(--caps);
-  font-size: 0.68rem;
-  letter-spacing: 0.2em;
-  text-indent: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  transition: color 0.4s ease, border-color 0.4s ease;
-}
-.copy-link:hover { color: var(--accent); border-color: var(--accent); }
-.copy-link.done { color: var(--accent); border-color: var(--accent); }
-
-.issue:target,
-.issue.flash {
-  animation: issueFlash 1.6s ease;
-}
-@keyframes issueFlash {
-  0%   { box-shadow: 0 0 0 2px var(--accent), var(--shadow); }
-  100% { box-shadow: 0 0 0 2px transparent, var(--shadow); }
-}
-.issue { scroll-margin-top: 20px; }
-
-/* ---------- траурный выпуск ---------- */
-
-.issue-mourning {
-  border-style: solid;
-  border-width: clamp(7px, 1.6vw, 13px);
-  box-shadow: inset 0 0 0 1px var(--rule-soft), var(--shadow);
-}
-html[data-theme="light"] .issue-mourning { border-color: #1b1712; }
-html[data-theme="dark"]  .issue-mourning { border-color: #3a0812; }
-
-/* ---------- экстренный выпуск: штамп ---------- */
-
-.issue > summary { position: relative; }
-
-.stamp {
-  position: absolute;
-  top: clamp(14px, 3vw, 22px);
-  right: clamp(14px, 4vw, 36px);
-  transform: rotate(-4deg);
-  border: 2px double var(--accent);
-  border-radius: 2px;
-  padding: 6px 12px;
-  font-family: var(--caps);
-  font-size: clamp(0.6rem, 1.6vw, 0.72rem);
-  letter-spacing: 0.24em;
-  text-indent: 0.24em;
-  text-transform: uppercase;
-  color: var(--accent);
-  opacity: 0.85;
-  pointer-events: none;
-}
-@media (max-width: 700px) {
-  .stamp {
-    position: static;
-    display: inline-block;
-    margin-bottom: 12px;
-    transform: rotate(-2deg);
-  }
+  margin-bottom: 7px;
 }
 
 /* ---------- частные объявления ---------- */
@@ -539,80 +638,138 @@ html[data-theme="dark"]  .issue-mourning { border-color: #3a0812; }
 .ads {
   column-span: all;
   break-inside: avoid;
-  margin: 30px 0 6px;
+  margin: 28px 0 6px;
   border-top: 2px solid var(--rule);
   border-bottom: 2px solid var(--rule);
-  padding: 16px 0 4px;
+  padding: 15px 0 4px;
 }
-
 .ads-head {
   text-align: center;
   font-family: var(--caps);
   font-weight: 500;
-  font-size: 0.78rem;
-  letter-spacing: 0.3em;
-  text-indent: 0.3em;
+  font-size: 0.74rem;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
   text-transform: uppercase;
   color: var(--accent);
-  margin-bottom: 16px;
+  margin-bottom: 15px;
 }
-
 .ads-grid {
   column-count: 3;
-  column-gap: clamp(18px, 3vw, 34px);
+  column-gap: clamp(16px, 3vw, 32px);
   column-rule: 1px solid var(--rule-soft);
 }
 @media (max-width: 900px) { .ads-grid { column-count: 2; } }
-@media (max-width: 600px) { .ads-grid { column-count: 1; } }
+@media (max-width: 620px) { .ads-grid { column-count: 1; } }
 
 .ad {
   break-inside: avoid;
-  font-size: 0.96rem;
-  line-height: 1.62;
+  font-size: 0.95rem;
+  line-height: 1.58;
   color: var(--text-dim);
-  padding-bottom: 12px;
-  margin-bottom: 12px;
+  padding-bottom: 11px;
+  margin-bottom: 11px;
   border-bottom: 1px solid var(--rule-soft);
 }
 .ad:last-child { border-bottom: none; }
-
 .ad-lead {
   font-family: var(--caps);
-  font-size: 0.74rem;
-  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text);
-  margin-right: 6px;
+  margin-right: 5px;
 }
 
-/* орнамент-разделитель */
+/* ---------- подвал выпуска ---------- */
+
+.issue-foot {
+  margin-top: 26px;
+  padding-top: 13px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.foot-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.issue-sign {
+  font-style: italic;
+  font-size: 0.94rem;
+  color: var(--text-dim);
+  margin-left: auto;
+}
+.copy-link, .print-btn {
+  appearance: none;
+  background: none;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  padding: 9px 15px;
+  min-height: 40px;
+  font-family: var(--caps);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: color 0.4s ease, border-color 0.4s ease;
+}
+.copy-link:hover, .print-btn:hover,
+.copy-link.done { color: var(--accent); border-color: var(--accent); }
+
+/* ---------- выходные данные ---------- */
+
+.colophon {
+  margin-top: clamp(24px, 4vw, 38px);
+  border-top: 3px double var(--rule);
+  padding-top: 14px;
+  text-align: center;
+  font-family: var(--caps);
+  font-size: clamp(0.54rem, 2vw, 0.64rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 2;
+  color: var(--text-dim);
+}
+
+/* подсветка выпуска, открытого по ссылке */
+.flash { animation: flashRing 1.8s ease; }
+@keyframes flashRing {
+  0%   { box-shadow: inset 0 0 0 2px var(--accent); }
+  100% { box-shadow: inset 0 0 0 2px transparent; }
+}
+.front, .issue { scroll-margin-top: 16px; }
+
+/* ---------- орнамент ---------- */
+
 .flourish {
   display: block;
-  width: min(340px, 70vw);
-  margin: 0 auto clamp(28px, 5vh, 44px);
+  width: min(300px, 62vw);
+  margin: clamp(26px, 5vw, 40px) auto 0;
   overflow: visible;
 }
 .flourish path { fill: none; stroke: var(--accent); stroke-width: 1.1; stroke-linecap: round; }
 .flourish .gem { fill: var(--accent-hi); stroke: none; }
 
-/* ================= ПОДВАЛ ================= */
+/* ================= ПОДВАЛ САЙТА ================= */
 
 footer {
   position: relative;
   z-index: 5;
   text-align: center;
-  padding: 40px 20px 70px;
+  padding: 34px 20px 64px;
 }
 footer .rule {
   width: min(200px, 50vw);
   height: 1px;
-  margin: 0 auto 22px;
+  margin: 0 auto 20px;
   background: linear-gradient(to right, transparent, var(--rule), transparent);
 }
 footer p {
   font-style: italic;
-  font-size: 0.95rem;
-  letter-spacing: 0.14em;
+  font-size: 0.94rem;
+  letter-spacing: 0.12em;
   color: var(--text-dim);
 }
 footer a { text-decoration: none; border-bottom: 1px solid transparent; }
@@ -622,11 +779,10 @@ footer a:hover { border-bottom-color: var(--accent); }
 
 .to-top {
   position: fixed;
-  right: 18px; bottom: 18px;
+  right: 14px; bottom: 14px;
   z-index: 95;
-  width: 44px; height: 44px;
+  width: 46px; height: 46px;
   border: 1px solid var(--rule);
-  border-radius: 3px;
   background: var(--paper);
   color: var(--text-dim);
   font-size: 1.1rem;
@@ -638,20 +794,52 @@ footer a:hover { border-bottom-color: var(--accent); }
 .to-top.visible { opacity: 1; visibility: visible; transform: none; }
 .to-top:hover { color: var(--accent); border-color: var(--accent); }
 
-/* ================= МЕЛОЧИ ================= */
+/* ================= ТЕЛЕФОН ================= */
 
-@media (max-width: 640px) {
-  .masthead-rules { font-size: 0.62rem; letter-spacing: 0.18em; gap: 8px; }
-  .columns p { font-size: 1.06rem; text-align: left; }
-  nav.editions { gap: 8px; }
-  .edition-btn { padding: 12px 10px; letter-spacing: 0.1em; text-indent: 0.1em; }
+@media (max-width: 520px) {
+  .dateline {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 10px;
+    letter-spacing: 0.14em;
+    white-space: normal;
+    text-align: center;
+  }
+  .dateline .mid { flex-basis: 100%; order: -1; font-size: 0.66rem; }
+
+  .edition-btn { flex: 1 1 0; padding: 12px 6px; letter-spacing: 0.1em; text-indent: 0.1em; }
+
+  .issue > summary { grid-template-columns: 1fr auto; padding: 14px 2px; }
+  .idx-date { grid-column: 1 / -1; }
+  .idx-tag { margin-left: 6px; }
+
+  .rubrics { letter-spacing: 0.16em; text-indent: 0.16em; }
+  .hed { letter-spacing: 0; }
+  .kicker { font-size: 0.68rem; letter-spacing: 0.16em; }
+
+  .issue-foot { flex-direction: column; align-items: stretch; }
+  .foot-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .copy-link, .print-btn { width: 100%; text-align: center; }
+  .issue-sign { margin: 0; text-align: right; }
 }
 
 @media print {
-  .aura, .vignette, nav.editions, .to-top, footer, body::before { display: none !important; }
+  .aura, .vignette, nav.editions, .to-top, footer,
+  body::before, .foot-actions, .idx-mark, .seal { display: none !important; }
   body { background: #fff; color: #000; }
-  .issue { box-shadow: none; border: none; }
+  .sheet { box-shadow: none; border: none; padding: 0; }
   .issue-body { display: block !important; }
+  .edition { display: block !important; }
+  .front-grid { display: block !important; }
+  .rail { border-top: 1px solid #000; margin-top: 14px; padding-top: 10px; }
+
+  /* печать одного выпуска */
+  body.print-single .edition:not(.active),
+  body.print-single .archive-head,
+  body.print-single .issue:not(.print-target),
+  body.print-single .front:not(.print-target),
+  body.print-single .flourish { display: none !important; }
+  body.print-single .archive { border-top: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -671,203 +859,246 @@ footer a:hover { border-bottom-color: var(--accent); }
 <div class="vignette"></div>
 
 <header>
-  <p class="eyebrow" lang="en">London &middot; MDCCCLII</p>
   <h1 class="masthead" lang="en">The Times</h1>
-  <div class="masthead-rules">
-    <span>Основана в 1785</span>
-    <span>&#10022;</span>
-    <span id="editionLabel">Общее издание</span>
-    <span>&#10022;</span>
-    <span>Цена 5d.</span>
+  <div class="wrap">
+    <div class="dateline">
+      <span>Основана в 1785</span>
+      <span class="mid" id="datelineMid">Лондон &middot; MDCCCLII</span>
+      <span>Цена 5d.</span>
+    </div>
   </div>
 </header>
 
-<nav class="editions" role="tablist" aria-label="Издания">
-  <button class="edition-btn active" id="btn-humans" role="tab" aria-selected="true" aria-controls="humans" data-edition="humans">
-    Для людей
-    <span class="sub">то, что читает Лондон</span>
-  </button>
-  <button class="edition-btn" id="btn-vampires" role="tab" aria-selected="false" aria-controls="vampires" data-edition="vampires" tabindex="-1">
-    Для вампиров
-    <span class="sub">то, что читает «Альбион»</span>
-  </button>
-</nav>
+<div class="wrap">
+  <nav class="editions" role="tablist" aria-label="Издания">
+    <button class="edition-btn active" id="btn-humans" role="tab" aria-selected="true" aria-controls="humans" data-edition="humans">
+      Для людей
+      <span class="sub">то, что читает Лондон</span>
+    </button>
+    <button class="edition-btn" id="btn-vampires" role="tab" aria-selected="false" aria-controls="vampires" data-edition="vampires" tabindex="-1">
+      Для вампиров
+      <span class="sub">то, что читает «Альбион»</span>
+    </button>
+  </nav>
+</div>
 
-<main>
+<main class="wrap">
 
 <!-- =========================================================
      ИЗДАНИЕ ДЛЯ ЛЮДЕЙ (светлая тема)
      ========================================================= -->
 <section class="edition active" id="humans" role="tabpanel" aria-labelledby="btn-humans">
+  <div class="sheet">
 
-  <p class="rubrics" lang="en">world &middot; weather &middot; finance &middot; lifestyle</p>
+    <p class="rubrics" lang="en">world &middot; weather &middot; finance &middot; lifestyle</p>
 
-  <!-- новые выпуски добавляй сюда, сверху: свежий — первым -->
-
-  <details class="issue" id="times-1852-10-21">
-    <summary>
+    <!-- ===== ПЕРВАЯ ПОЛОСА ===== -->
+    <article class="front" id="times-1852-10-21">
       <span class="stamp">Экстренный выпуск</span>
-      <div class="issue-meta">
+
+      <div class="front-meta">
         <span class="date">21 октября 1852</span>
         <span>Выпуск № XXI</span>
       </div>
-      <h2 class="issue-title">Зверь в тумане: чудовищные убийства в Восточном Лондоне</h2>
-      <p class="issue-standfirst">Шесть жертв за девять ночей. Скотленд-Ярд склоняется к версии о безумце.</p>
-      <span class="issue-open-hint">Читать выпуск</span>
-    </summary>
 
-    <div class="issue-body">
-      <div class="columns">
+      <h2 class="hed">Зверь в тумане</h2>
+      <p class="deck deck-1">Чудовищные убийства в Восточном Лондоне</p>
+      <p class="deck deck-2">Шесть жертв за девять ночей. Скотленд-Ярд склоняется к версии о безумце</p>
 
-        <figure class="cut span-all">
-          <!-- Вместо блока .plate вставь: <img src="ССЫЛКА" alt=""> -->
-          <div class="plate">Гравюра</div>
-          <figcaption>Переулок близ Леман-стрит на рассвете.</figcaption>
-        </figure>
+      <div class="front-grid">
+        <div class="columns">
 
-        <p class="kicker" lang="en">Pay attention</p>
-        <p class="lead">Редакция долго воздерживалась от публикации, не желая тревожить общество в дни национального траура. Однако молчание сделалось преступлением против читателя. С ночи на 13 октября в приходах Уайтчепела, Шедуэлла и Спиталфилдса обнаружены тела шести подданных Ее Величества: трех мужчин, двух женщин и ребенка. Все — из числа беднейших. Все — найдены на рассвете, в переулках, отходящих от людных улиц.</p>
+          <figure class="cut span-all">
+            <!-- Вместо блока .plate вставь: <img src="ССЫЛКА" alt=""> -->
+            <div class="plate">Гравюра</div>
+            <figcaption>Переулок близ Леман-стрит на рассвете.</figcaption>
+          </figure>
 
-        <blockquote class="pull">
-          «Это не человек. Человек так не ест»
-          <cite>из показаний констебля N дивизиона</cite>
-        </blockquote>
+          <p class="kicker" lang="en">Pay attention</p>
+          <p class="lead">Редакция долго воздерживалась от публикации, не желая тревожить общество в дни национального траура. Однако молчание сделалось преступлением против читателя. С ночи на 13 октября в приходах Уайтчепела, Шедуэлла и Спиталфилдса обнаружены тела шести подданных Ее Величества: трех мужчин, двух женщин и ребенка. Все — из числа беднейших. Все — найдены на рассвете, в переулках, отходящих от людных улиц.</p>
 
-        <p class="kicker" lang="en">We spare you the details</p>
-        <p>О состоянии тел мы не станем писать. Скажем лишь, что увечья не оставляют сомнений: убийца не просто лишает жертву жизни — он остается подле нее. Полицейский хирург мистер Аддершоу, осмотревший четверых, отказался говорить с нашим корреспондентом и, по свидетельству очевидцев, покинул мертвецкую в состоянии, недостойном его лет и опыта. Приходской священник церкви Святого Матфея отслужил панихиду при закрытых гробах, что само по себе говорит довольно.</p>
+          <blockquote class="pull">
+            «Это не человек. Человек так не ест»
+            <cite>из показаний констебля N дивизиона</cite>
+          </blockquote>
 
-        <p>Скотленд-Ярд склоняется к версии о безумце, бежавшем из частного дома для умалишенных, либо о моряке, сошедшем с корабля Ост-Индской компании и повредившемся рассудком в дальнем плавании. Инспектор, руководящий розыском, отверг предположение о причастности нескольких лиц: почерк, по его словам, слишком единообразен. Мы разделяем осторожность полиции и призываем читателей к тому же. В Ист-Энде уже толкуют о нечистой силе, о звере, о каре Господней за смерть Королевы. Подобные разговоры не спасли еще ни одной жизни.</p>
+          <p class="kicker" lang="en">We spare you the details</p>
+          <p>О состоянии тел мы не станем писать. Скажем лишь, что увечья не оставляют сомнений: убийца не просто лишает жертву жизни — он остается подле нее. Полицейский хирург мистер Аддершоу, осмотревший четверых, отказался говорить с нашим корреспондентом и, по свидетельству очевидцев, покинул мертвецкую в состоянии, недостойном его лет и опыта. Приходской священник церкви Святого Матфея отслужил панихиду при закрытых гробах, что само по себе говорит довольно.</p>
 
-        <p class="kicker" lang="en">In your best interest</p>
-        <p>Мы вынуждены заметить, что силы столичной полиции ныне обращены на охрану Дворца и поддержание порядка при Парламенте, где вопрос о Регентстве все еще не разрешен. Восточные приходы патрулируются вполовину против обыкновения. Редакция почтительно, но твердо обращается к министру внутренних дел: Империя, что не может уберечь своих беднейших подданных от пожирающего их чудовища, дурно готовится к правлению юного Короля.</p>
+          <p>Скотленд-Ярд склоняется к версии о безумце, бежавшем из частного дома для умалишенных, либо о моряке, сошедшем с корабля Ост-Индской компании и повредившемся рассудком в дальнем плавании. Инспектор, руководящий розыском, отверг предположение о причастности нескольких лиц: почерк, по его словам, слишком единообразен. Мы разделяем осторожность полиции и призываем читателей к тому же. В Ист-Энде уже толкуют о нечистой силе, о звере, о каре Господней за смерть Королевы. Подобные разговоры не спасли еще ни одной жизни.</p>
 
-        <div class="notice">
-          <span class="notice-title">Объявление</span>
-          До поимки злодея мы советуем: не выходить после наступления темноты в одиночку; матерям — держать детей при себе с вечернего звона; хозяевам питейных заведений — провожать до дому припозднившихся гостей. Всякого, кто видел что-либо в означенные ночи, просят явиться в участок на Леман-стрит. Обещано вознаграждение в пятьдесят фунтов.
-        </div>
+          <p class="kicker" lang="en">In your best interest</p>
+          <p>Мы вынуждены заметить, что силы столичной полиции ныне обращены на охрану Дворца и поддержание порядка при Парламенте, где вопрос о Регентстве все еще не разрешен. Восточные приходы патрулируются вполовину против обыкновения. Редакция почтительно, но твердо обращается к министру внутренних дел: Империя, что не может уберечь своих беднейших подданных от пожирающего их чудовища, дурно готовится к правлению юного Короля.</p>
 
-        <p class="kicker" lang="en">Your business is to be with us</p>
-        <p>Империя оплакивает Королеву — и не смеет забывать о живых. «Таймс» будет следовать за этим делом до его конца, каким бы он ни был, и не позволит ни страху, ни суеверию, ни чиновничьему удобству занять место истины.</p>
-
-        <section class="ads">
-          <h3 class="ads-head">Частные объявления</h3>
-          <div class="ads-grid">
-            <p class="ad"><span class="ad-lead">Разыскивается.</span> Энн Кроули, девятнадцати лет, рыжая, в сером платье, не возвращалась домой с ночи на 16-е. Всякому, кто доставит известие, — три фунта. Спитал-сквер, 4, у миссис Кроули.</p>
-            <p class="ad"><span class="ad-lead">Требуется.</span> В дом на Портман-сквер — горничная не моложе двадцати пяти лет, тихого нрава, без родни в столице. Рекомендации от двух прежних мест обязательны. Жалованье превосходное. Обращаться письменно.</p>
-            <p class="ad"><span class="ad-lead">Продаётся.</span> Пара гнедых с упряжью, по случаю отъезда владельца за границу. Смотреть в конюшнях у Ковент-Гардена всякий день до полудня.</p>
-            <p class="ad"><span class="ad-lead">Уведомление.</span> Общество трезвости Уайтчепела извещает, что вечерние собрания переносятся на четыре часа пополудни ввиду ранней темноты и известных обстоятельств.</p>
-            <p class="ad"><span class="ad-lead">Утеряно.</span> Медальон серебряный, овальный, с прядью тёмных волос. Нашедшему — вознаграждение без вопросов. Оставить у аптекаря на Леман-стрит.</p>
-            <p class="ad"><span class="ad-lead">Врачебное.</span> Д-ръ Уэйнрайт принимает по нервическим расстройствам и бессоннице. Харли-стрит. Ночные визиты — по особому уговору.</p>
+          <div class="notice">
+            <span class="notice-title">Объявление</span>
+            До поимки злодея мы советуем: не выходить после наступления темноты в одиночку; матерям — держать детей при себе с вечернего звона; хозяевам питейных заведений — провожать до дому припозднившихся гостей. Всякого, кто видел что-либо в означенные ночи, просят явиться в участок на Леман-стрит. Обещано вознаграждение в пятьдесят фунтов.
           </div>
-        </section>
 
-        <div class="issue-foot">
-          <button class="copy-link" type="button">Ссылка на выпуск</button>
-          <p class="issue-sign">Редакция «Таймс»</p>
+          <p class="kicker" lang="en">Your business is to be with us</p>
+          <p>Империя оплакивает Королеву — и не смеет забывать о живых. «Таймс» будет следовать за этим делом до его конца, каким бы он ни был, и не позволит ни страху, ни суеверию, ни чиновничьему удобству занять место истины.</p>
         </div>
-      </div>
-    </div>
-  </details>
 
-  <details class="issue issue-mourning" id="times-1852-10-13">
-    <summary>
-      <div class="issue-meta">
-        <span class="date">13 октября 1852</span>
-        <span>Выпуск № XIII</span>
-      </div>
-      <h2 class="issue-title">Скорбь нации: скоропостижная кончина Её Величества</h2>
-      <p class="issue-standfirst">Англия осиротела. Корона переходит к одиннадцатилетнему наследнику.</p>
-      <span class="issue-open-hint">Читать выпуск</span>
-    </summary>
-
-    <div class="issue-body">
-      <div class="columns">
-
-        <figure class="cut span-all">
-          <div class="plate">Гравюра</div>
-          <figcaption>Букингемский дворец при спущенных флагах.</figcaption>
-        </figure>
-
-        <p class="kicker" lang="en">Pay attention</p>
-        <p class="lead">С глубочайшим прискорбием и тяжелым сердцем редакция вынуждена исполнить свой самый горестный долг. Сегодня Лондон проснулся в тени невосполнимой утраты. Неумолимый ход времени нашей великой столицы замер под траурный звон колоколов собора Святого Павла. Позавчера, 11 октября, Ее Величество королева Виктория мирно отошла ко Господу в своих покоях в Букингемском дворце. Нация погрузилась в глубочайший траур.</p>
-
-        <blockquote class="pull">
-          «Таймс» — это голос самой Империи
-          <cite>13 октября 1852</cite>
-        </blockquote>
-
-        <p class="kicker" lang="en">In your best interest</p>
-        <p>Официальный бюллетень, подписанный консилиумом королевских врачей, называет причиной этой трагедии стремительно развившуюся «гнилую лихорадку». Мы призываем наших читателей сохранять благоразумие и не поддаваться пагубным слухам, которые, к нашему великому сожалению, уже начали циркулировать в обществе. Домыслы о вмешательстве радикальных элементов или иностранных агентов не делают чести тем, кто их распространяет, и Скотленд-Ярд уже предпринимает меры для пресечения подобных провокаций.</p>
-
-        <p>Однако мы не можем игнорировать серьезность положения, в котором оказалась Британская Империя. Корона переходит к Его Королевскому Высочеству принцу Альберту Эдуарду. Учитывая, что юному наследнику едва исполнилось одиннадцать лет, перед Парламентом встает беспрецедентный конституционный вызов. Сегодня утром обе палаты соберутся на экстренное заседание для обсуждения вопроса о Регентстве. От мудрости и сдержанности наших лордов и министров сейчас зависит стабильность всего государства.</p>
-
-        <p>Крайне важно, чтобы в эти темные дни порядок поддерживался неукоснительно. Поступают тревожные сообщения о брожении умов в промышленных районах Ист-Энда. В связи с этим лондонская полиция переведена на усиленный режим несения службы, дабы гарантировать безопасность добропорядочных граждан и сохранность их имущества.</p>
-
-        <p class="kicker" lang="en">Your business is to be with us</p>
-        <p>В часы тяжелейших испытаний для Короны и Отечества истинный британец должен опираться на проверенные факты, а не на праздные домыслы. «Таймс» продолжит беспристрастно информировать вас о решениях Парламента и шагах Правительства. Наш долг — оставаться непоколебимым маяком истины для Империи.</p>
-
-        <section class="ads">
-          <h3 class="ads-head">Частные объявления</h3>
-          <div class="ads-grid">
-            <p class="ad"><span class="ad-lead">Траурное.</span> Креп чёрный лионский, ленты, перчатки и вуали — в наличии без промедления. Мессрс. Джей и сыновья, Риджент-стрит. Приём заказов с семи утра.</p>
-            <p class="ad"><span class="ad-lead">Панихида.</span> Церковь Святого Матфея служит по Ее Величеству ежедневно в шесть часов пополудни до окончания государственного траура. Двери открыты для всякого сословия.</p>
-            <p class="ad"><span class="ad-lead">Уведомление.</span> Театр Её Величества извещает почтенную публику о закрытии сезона до особого объявления. Билеты подлежат возврату в кассе.</p>
-            <p class="ad"><span class="ad-lead">Портретное.</span> Гравированный портрет покойной Королевы, в раме и без, по подписке. Ателье на Стрэнде. Число оттисков ограничено.</p>
-            <p class="ad"><span class="ad-lead">Банковское.</span> Конторы Сити извещают о сокращённых часах приёма в дни траура. Векселя к погашению принимаются до полудня.</p>
-            <p class="ad"><span class="ad-lead">Требуется.</span> В дом близ Мэйфэр — двое лакеев в траурной ливрее, немедленно. Рост и осанка обязательны. Спрашивать управляющего.</p>
+        <!-- боковая колонка: погода, биржа, краткие новости -->
+        <aside class="rail">
+          <div class="rail-box">
+            <h3 class="rail-head">Погода</h3>
+            <p>Туман с ночи, к полудню не рассеялся. Ветер западный, слабый. Барометр падает. К вечеру ожидается сгущение тумана в приречных приходах; в Ист-Энде видимость менее двадцати шагов.</p>
           </div>
-        </section>
 
-        <div class="issue-foot">
+          <div class="rail-box">
+            <h3 class="rail-head">Биржа</h3>
+            <dl class="figures">
+              <div><dt>Консоли</dt><dd>98⅜</dd></div>
+              <div><dt>Ост-Индская</dt><dd>246</dd></div>
+              <div><dt>Пшеница, квартер</dt><dd>40s 6d</dd></div>
+              <div><dt>Уголь ньюкаслский</dt><dd>17s</dd></div>
+              <div><dt>Фунт стерлингов</dt><dd>тверд</dd></div>
+            </dl>
+          </div>
+
+          <div class="rail-box">
+            <h3 class="rail-head">Кратко</h3>
+            <p><span class="brief-lead">Парламент.</span> Прения о Регентстве отложены четвертый день кряду. Лорды расходятся за полночь, не приняв решения.</p>
+            <p><span class="brief-lead">Из колоний.</span> Почтовый пароход из Калькутты задержан штормом у Мадейры. Депеши ожидаются к пятнице.</p>
+            <p><span class="brief-lead">Суд.</span> В Олд-Бейли фальшивомонетчик Дж. Стеббинс приговорен к четырнадцати годам каторги за океаном.</p>
+            <p><span class="brief-lead">Городское.</span> Газовое освещение на Коммершл-роуд не горело три ночи. Компания ссылается на неисправность магистрали.</p>
+          </div>
+        </aside>
+      </div>
+
+      <section class="ads">
+        <h3 class="ads-head">Частные объявления</h3>
+        <div class="ads-grid">
+          <p class="ad"><span class="ad-lead">Разыскивается.</span> Энн Кроули, девятнадцати лет, рыжая, в сером платье, не возвращалась домой с ночи на 16-е. Всякому, кто доставит известие, — три фунта. Спитал-сквер, 4, у миссис Кроули.</p>
+          <p class="ad"><span class="ad-lead">Требуется.</span> В дом на Портман-сквер — горничная не моложе двадцати пяти лет, тихого нрава, без родни в столице. Рекомендации от двух прежних мест обязательны. Жалованье превосходное.</p>
+          <p class="ad"><span class="ad-lead">Продаётся.</span> Пара гнедых с упряжью, по случаю отъезда владельца за границу. Смотреть в конюшнях у Ковент-Гардена всякий день до полудня.</p>
+          <p class="ad"><span class="ad-lead">Уведомление.</span> Общество трезвости Уайтчепела извещает, что вечерние собрания переносятся на четыре часа пополудни ввиду ранней темноты и известных обстоятельств.</p>
+          <p class="ad"><span class="ad-lead">Утеряно.</span> Медальон серебряный, овальный, с прядью тёмных волос. Нашедшему — вознаграждение без вопросов. Оставить у аптекаря на Леман-стрит.</p>
+          <p class="ad"><span class="ad-lead">Врачебное.</span> Д-ръ Уэйнрайт принимает по нервическим расстройствам и бессоннице. Харли-стрит. Ночные визиты — по особому уговору.</p>
+        </div>
+      </section>
+
+      <div class="issue-foot">
+        <div class="foot-actions">
           <button class="copy-link" type="button">Ссылка на выпуск</button>
-          <p class="issue-sign">Редакция «Таймс»</p>
+          <button class="print-btn" type="button">Печать</button>
         </div>
+        <p class="issue-sign">Редакция «Таймс»</p>
       </div>
+    </article>
+
+    <!-- ===== ПОДШИВКА ===== -->
+    <div class="archive">
+      <p class="archive-head">Прошлые выпуски</p>
+
+      <details class="issue issue-mourning" id="times-1852-10-13">
+        <summary>
+          <span class="idx-date">13 октября</span>
+          <span class="idx-title">Скорбь нации: скоропостижная кончина Её Величества<span class="idx-tag">Траурный</span></span>
+          <span class="idx-mark" aria-hidden="true">+</span>
+        </summary>
+
+        <div class="issue-body">
+          <p class="body-deck">Англия осиротела. Корона переходит к одиннадцатилетнему наследнику</p>
+          <div class="columns">
+
+            <figure class="cut span-all">
+              <div class="plate">Гравюра</div>
+              <figcaption>Букингемский дворец при спущенных флагах.</figcaption>
+            </figure>
+
+            <p class="kicker" lang="en">Pay attention</p>
+            <p class="lead">С глубочайшим прискорбием и тяжелым сердцем редакция вынуждена исполнить свой самый горестный долг. Сегодня Лондон проснулся в тени невосполнимой утраты. Неумолимый ход времени нашей великой столицы замер под траурный звон колоколов собора Святого Павла. Позавчера, 11 октября, Ее Величество королева Виктория мирно отошла ко Господу в своих покоях в Букингемском дворце. Нация погрузилась в глубочайший траур.</p>
+
+            <blockquote class="pull">
+              «Таймс» — это голос самой Империи
+              <cite>13 октября 1852</cite>
+            </blockquote>
+
+            <p class="kicker" lang="en">In your best interest</p>
+            <p>Официальный бюллетень, подписанный консилиумом королевских врачей, называет причиной этой трагедии стремительно развившуюся «гнилую лихорадку». Мы призываем наших читателей сохранять благоразумие и не поддаваться пагубным слухам, которые, к нашему великому сожалению, уже начали циркулировать в обществе. Домыслы о вмешательстве радикальных элементов или иностранных агентов не делают чести тем, кто их распространяет, и Скотленд-Ярд уже предпринимает меры для пресечения подобных провокаций.</p>
+
+            <p>Однако мы не можем игнорировать серьезность положения, в котором оказалась Британская Империя. Корона переходит к Его Королевскому Высочеству принцу Альберту Эдуарду. Учитывая, что юному наследнику едва исполнилось одиннадцать лет, перед Парламентом встает беспрецедентный конституционный вызов. Сегодня утром обе палаты соберутся на экстренное заседание для обсуждения вопроса о Регентстве. От мудрости и сдержанности наших лордов и министров сейчас зависит стабильность всего государства.</p>
+
+            <p>Крайне важно, чтобы в эти темные дни порядок поддерживался неукоснительно. Поступают тревожные сообщения о брожении умов в промышленных районах Ист-Энда. В связи с этим лондонская полиция переведена на усиленный режим несения службы, дабы гарантировать безопасность добропорядочных граждан и сохранность их имущества.</p>
+
+            <p class="kicker" lang="en">Your business is to be with us</p>
+            <p>В часы тяжелейших испытаний для Короны и Отечества истинный британец должен опираться на проверенные факты, а не на праздные домыслы. «Таймс» продолжит беспристрастно информировать вас о решениях Парламента и шагах Правительства. Наш долг — оставаться непоколебимым маяком истины для Империи.</p>
+
+            <section class="ads">
+              <h3 class="ads-head">Частные объявления</h3>
+              <div class="ads-grid">
+                <p class="ad"><span class="ad-lead">Траурное.</span> Креп чёрный лионский, ленты, перчатки и вуали — в наличии без промедления. Мессрс. Джей и сыновья, Риджент-стрит. Приём заказов с семи утра.</p>
+                <p class="ad"><span class="ad-lead">Панихида.</span> Церковь Святого Матфея служит по Ее Величеству ежедневно в шесть часов пополудни до окончания государственного траура.</p>
+                <p class="ad"><span class="ad-lead">Уведомление.</span> Театр Её Величества извещает почтенную публику о закрытии сезона до особого объявления. Билеты подлежат возврату в кассе.</p>
+                <p class="ad"><span class="ad-lead">Портретное.</span> Гравированный портрет покойной Королевы, в раме и без, по подписке. Ателье на Стрэнде. Число оттисков ограничено.</p>
+                <p class="ad"><span class="ad-lead">Банковское.</span> Конторы Сити извещают о сокращённых часах приёма в дни траура. Векселя к погашению принимаются до полудня.</p>
+                <p class="ad"><span class="ad-lead">Требуется.</span> В дом близ Мэйфэр — двое лакеев в траурной ливрее, немедленно. Рост и осанка обязательны. Спрашивать управляющего.</p>
+              </div>
+            </section>
+
+            <div class="issue-foot">
+              <div class="foot-actions">
+                <button class="copy-link" type="button">Ссылка на выпуск</button>
+                <button class="print-btn" type="button">Печать</button>
+              </div>
+              <p class="issue-sign">Редакция «Таймс»</p>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="issue" id="times-1852-10-04">
+        <summary>
+          <span class="idx-date">4 октября</span>
+          <span class="idx-title">Свежий выпуск! Господа, не проходите мимо!</span>
+          <span class="idx-mark" aria-hidden="true">+</span>
+        </summary>
+
+        <div class="issue-body">
+          <p class="body-deck">Пока весь остальной Лондон ещё спит, наши печатные машины уже выковали для вас правду дня</p>
+          <div class="columns">
+
+            <p class="kicker" lang="en">Pay attention</p>
+            <p class="lead">Взгляните на этот лист! Пока весь остальной Лондон еще спит, наши печатные машины уже выковали для вас правду дня! Что там пишут в других листках? Слухи? Сплетни? Пустые домыслы? Оставьте их зевакам!</p>
+
+            <blockquote class="pull">
+              «Таймс» — это голос самой Империи
+              <cite>4 октября 1852</cite>
+            </blockquote>
+
+            <p class="kicker" lang="en">In your best interest</p>
+            <p>Хотите знать, что решили в Парламенте до того, как об этом заговорят в клубах Сент-Джеймса? Желаете прочесть отчеты из далеких колоний, доставленные прямо с почтовых пароходов? У нас есть все! Самые точные цифры, самые смелые статьи, аналитика, перед которой склоняют головы министры!</p>
+
+            <p>Никакой желтизны, никакой чепухи — только то, что действительно важно. В этом номере — всё: от биржевых сводок до судебных хроник. Это не просто бумага, господа, это компас, который не даст вам сбиться с пути в мире большой политики и большого бизнеса!</p>
+
+            <p class="kicker" lang="en">Your business is to be with us</p>
+            <p>Станьте человеком, который знает всё, прежде чем остальные успеют открыть рот! «Таймс» — газета для тех, кто правит этим миром, и для тех, кто хочет понимать, как он устроен.</p>
+
+            <div class="notice">
+              <span class="notice-title">Подписка</span>
+              Годовая подписка с доставкой на дом принимается в конторе на Принтинг-Хаус-сквер и у всякого книготорговца столицы. Утренний лист подаётся к завтраку прежде почты.
+            </div>
+
+            <div class="issue-foot">
+              <div class="foot-actions">
+                <button class="copy-link" type="button">Ссылка на выпуск</button>
+                <button class="print-btn" type="button">Печать</button>
+              </div>
+              <p class="issue-sign">Редакция «Таймс»</p>
+            </div>
+          </div>
+        </div>
+      </details>
+
     </div>
-  </details>
 
-  <details class="issue" id="times-1852-10-04">
-    <summary>
-      <div class="issue-meta">
-        <span class="date">4 октября 1852</span>
-        <span>Выпуск № IV</span>
-      </div>
-      <h2 class="issue-title">Свежий выпуск! Господа, не проходите мимо!</h2>
-      <p class="issue-standfirst">Пока весь остальной Лондон ещё спит, наши печатные машины уже выковали для вас правду дня.</p>
-      <span class="issue-open-hint">Читать выпуск</span>
-    </summary>
-
-    <div class="issue-body">
-      <div class="columns">
-
-        <p class="kicker" lang="en">Pay attention</p>
-        <p class="lead">Взгляните на этот лист! Пока весь остальной Лондон еще спит, наши печатные машины уже выковали для вас правду дня! Что там пишут в других листках? Слухи? Сплетни? Пустые домыслы? Оставьте их зевакам!</p>
-
-        <blockquote class="pull">
-          «Таймс» — это голос самой Империи
-          <cite>4 октября 1852</cite>
-        </blockquote>
-
-        <p class="kicker" lang="en">In your best interest</p>
-        <p>Хотите знать, что решили в Парламенте до того, как об этом заговорят в клубах Сент-Джеймса? Желаете прочесть отчеты из далеких колоний, доставленные прямо с почтовых пароходов? У нас есть все! Самые точные цифры, самые смелые статьи, аналитика, перед которой склоняют головы министры!</p>
-
-        <p>Никакой желтизны, никакой чепухи — только то, что действительно важно. В этом номере — всё: от биржевых сводок до судебных хроник. Это не просто бумага, господа, это компас, который не даст вам сбиться с пути в мире большой политики и большого бизнеса!</p>
-
-        <p class="kicker" lang="en">Your business is to be with us</p>
-        <p>Станьте человеком, который знает всё, прежде чем остальные успеют открыть рот! «Таймс» — газета для тех, кто правит этим миром, и для тех, кто хочет понимать, как он устроен.</p>
-
-        <div class="notice">
-          <span class="notice-title">Подписка</span>
-          Годовая подписка с доставкой на дом принимается в конторе на Принтинг-Хаус-сквер и у всякого книготорговца столицы. Утренний лист подаётся к завтраку прежде почты.
-        </div>
-
-        <div class="issue-foot">
-          <button class="copy-link" type="button">Ссылка на выпуск</button>
-          <p class="issue-sign">Редакция «Таймс»</p>
-        </div>
-      </div>
-    </div>
-  </details>
+    <p class="colophon">
+      Отпечатано в конторе на Принтинг-Хаус-сквер, приход Святой Бригитты<br>
+      Зарегистрировано как газета &middot; Перепечатка преследуется по закону
+    </p>
+  </div>
 
   <svg class="flourish" viewBox="0 0 400 40" aria-hidden="true" focusable="false">
     <path d="M20,20 C70,20 90,6 120,14 C150,22 160,20 200,20 C240,20 250,22 280,14 C310,6 330,20 380,20"/>
@@ -875,192 +1106,231 @@ footer a:hover { border-bottom-color: var(--accent); }
     <path d="M280,14 C292,26 308,30 322,24 C336,18 334,6 322,8 C312,10 316,22 328,20"/>
     <rect class="gem" x="196" y="16" width="8" height="8" transform="rotate(45 200 20)"/>
   </svg>
-
 </section>
 
 <!-- =========================================================
      ИЗДАНИЕ ДЛЯ ВАМПИРОВ (тёмная тема)
      ========================================================= -->
 <section class="edition" id="vampires" role="tabpanel" aria-labelledby="btn-vampires">
+  <div class="sheet">
 
-  <p class="rubrics">Капитул &middot; Угодья &middot; Долги &middot; Объявления</p>
+    <p class="rubrics">Капитул &middot; Угодья &middot; Долги &middot; Объявления</p>
 
-  <!-- новые оттиски добавляй сюда, сверху -->
+    <article class="front" id="albion-1852-10-21">
+      <!-- сургучная печать: удали строку ниже, если не нужна -->
+      <span class="seal" aria-hidden="true">A</span>
 
-  <details class="issue" id="albion-1852-10-21">
-    <summary>
-      <div class="issue-meta">
+      <div class="front-meta">
         <span class="date">21 октября 1852</span>
         <span>Оттиск для членов клуба</span>
       </div>
-      <h2 class="issue-title">О неосторожности в восточных приходах</h2>
-      <p class="issue-standfirst">Шесть тел за девять ночей — и полсотни строк в утренней газете. Капитул требует имени.</p>
-      <span class="issue-open-hint">Читать выпуск</span>
-    </summary>
 
-    <div class="issue-body">
-      <div class="columns">
+      <h2 class="hed">О неосторожности в восточных приходах</h2>
+      <p class="deck deck-1">Шесть тел за девять ночей — и полсотни строк в утренней газете</p>
+      <p class="deck deck-2">Капитул требует имени до третьей ночи</p>
 
-        <p class="lead">Сегодняшний утренний лист «Таймс» лежит на столе Капитула. Шесть жертв, названных поименно, приход за приходом, и фраза констебля, которую к вечеру повторит весь Ист-Энд. Двадцать лет безупречной тишины стоили дороже, чем девять ночей чьего-то удовольствия.</p>
+      <div class="front-grid">
+        <div class="columns">
 
-        <blockquote class="pull">
-          «Голод — не оправдание. Оправданий не существует»
-          <cite>из речи в Капитуле</cite>
-        </blockquote>
+          <p class="lead">Сегодняшний утренний лист «Таймс» лежит на столе Капитула. Шесть жертв, названных поименно, приход за приходом, и фраза констебля, которую к вечеру повторит весь Ист-Энд. Двадцать лет безупречной тишины стоили дороже, чем девять ночей чьего-то удовольствия.</p>
 
-        <p class="kicker">Что видят смертные</p>
-        <p>Пока — безумца из частного дома для умалишенных либо моряка, повредившегося рассудком в дальнем плавании. Инспектор, ведущий розыск, уверен в единственном виновнике, и в этом он, к несчастью для нас, прав. Хуже другое: полицейский хирург отказался говорить с газетой, а приход служил при закрытых гробах. Оба поступка означают, что увиденное не укладывается в версию, которую Ярд предлагает публике. Люди умеют не верить собственным отчётам дольше, чем принято думать, но не бесконечно.</p>
+          <blockquote class="pull">
+            «Голод — не оправдание. Оправданий не существует»
+            <cite>из речи в Капитуле</cite>
+          </blockquote>
 
-        <p class="kicker">Чего Капитул не потерпит</p>
-        <p>Уайтчепел, Шедуэлл и Спиталфилдс закрыты. Всякий, кто выйдет за стол в этих приходах прежде отмены запрета, будет считаться не голодным, а неподчинившимся, и разница между этими словами измеряется в способе казни. Неофитам, чьи наставники не поручились за них лично, предписано кормиться исключительно в стенах клуба. Магистрам — проверить своих питомцев и своих должников: тело, найденное на рассвете в переулке, чаще всего означает, что кто-то не довёл начатое до подвала.</p>
+          <p class="kicker">Что видят смертные</p>
+          <p>Пока — безумца из частного дома для умалишенных либо моряка, повредившегося рассудком в дальнем плавании. Инспектор, ведущий розыск, уверен в единственном виновнике, и в этом он, к несчастью для нас, прав. Хуже другое: полицейский хирург отказался говорить с газетой, а приход служил при закрытых гробах. Оба поступка означают, что увиденное не укладывается в версию, которую Ярд предлагает публике. Люди умеют не верить собственным отчётам дольше, чем принято думать, но не бесконечно.</p>
 
-        <p class="kicker">Об Ордене</p>
-        <p>Напоминаем то, что молодым кажется преувеличением. Всякая газетная строка о звере читается не только в клубах Сент-Джеймса. Под собором Святого Павла её читают внимательнее нас, и там давно ждут именно такого повода. Шесть тел в трёх приходах — это карта, любезно отпечатанная тиражом в сорок тысяч экземпляров.</p>
+          <p class="kicker">Чего Капитул не потерпит</p>
+          <p>Уайтчепел, Шедуэлл и Спиталфилдс закрыты. Всякий, кто выйдет за стол в этих приходах прежде отмены запрета, будет считаться не голодным, а <span class="sp">неподчинившимся</span>, и разница между этими словами измеряется в способе казни. Неофитам, чьи наставники не поручились за них лично, предписано кормиться исключительно в стенах клуба. Магистрам — проверить своих питомцев и своих должников: тело, найденное на рассвете в переулке, чаще всего означает, что кто-то не довёл начатое до подвала.</p>
 
-        <div class="notice">
-          <span class="notice-title">К сведению</span>
-          Всякий, кому известно имя, обязан назвать его Магистру своего круга до третьей ночи. Умолчание будет расценено как соучастие.
-        </div>
+          <p class="kicker">Об Ордене</p>
+          <p>Напоминаем то, что молодым кажется преувеличением. Всякая газетная строка о звере читается не только в клубах Сент-Джеймса. Под собором Святого Павла её читают внимательнее нас, и там давно ждут именно такого повода. Шесть тел в трёх приходах — это карта, любезно отпечатанная тиражом в сорок тысяч экземпляров.</p>
 
-        <section class="ads">
-          <h3 class="ads-head">Объявления Капитула</h3>
-          <div class="ads-grid">
-            <p class="ad"><span class="ad-lead">Угодья.</span> Уайтчепел, Шедуэлл, Спиталфилдс закрыты до особого распоряжения. Нарушение границ приравнивается к охоте на чужой земле.</p>
-            <p class="ad"><span class="ad-lead">Долг.</span> За домом Хартли числится вторая просрочка. Кредиторам надлежит воздержаться от самостоятельных мер до решения Магистров.</p>
-            <p class="ad"><span class="ad-lead">Вызов.</span> Неофитам первого десятилетия явиться в Капитул в ночь на пятницу. Наставникам присутствовать при своих.</p>
-            <p class="ad"><span class="ad-lead">Ищется.</span> Служащий архива Тауэра, отпущенный без объяснений 12-го числа. Живым. Настоятельно — живым.</p>
-            <p class="ad"><span class="ad-lead">Питомцы.</span> Двое из числа приглашённых более не допускаются к ночным приёмам. Имена сообщены привратнику.</p>
-            <p class="ad"><span class="ad-lead">Приобретается.</span> Городской дом с глухим подвалом, к западу от парка, без соседей по стене. Расчёт немедленный, через смертного поверенного.</p>
+          <div class="notice">
+            <span class="notice-title">К сведению</span>
+            Всякий, кому известно имя, обязан назвать его Магистру своего круга до третьей ночи. Умолчание будет расценено как соучастие.
           </div>
-        </section>
+        </div>
 
-        <div class="issue-foot">
+        <aside class="rail">
+          <div class="rail-box">
+            <h3 class="rail-head">Ночь</h3>
+            <p>Заход солнца — 4 часа 47 минут пополудни. Рассвет — 6 часов 52 минуты. Луна на ущербе, света мало. Туман до утра: приличий ради он полезнее всякой осторожности.</p>
+          </div>
+
+          <div class="rail-box">
+            <h3 class="rail-head">Угодья</h3>
+            <dl class="figures">
+              <div><dt>Уайтчепел</dt><dd>закрыт</dd></div>
+              <div><dt>Шедуэлл</dt><dd>закрыт</dd></div>
+              <div><dt>Спиталфилдс</dt><dd>закрыт</dd></div>
+              <div><dt>Ковент-Гарден</dt><dd>открыт</dd></div>
+              <div><dt>Мэйфэр</dt><dd>по приглашению</dd></div>
+            </dl>
+          </div>
+
+          <div class="rail-box">
+            <h3 class="rail-head">Кратко</h3>
+            <p><span class="brief-lead">Капитул.</span> Общее собрание в ночь на пятницу. Отсутствие принимается лишь по причине истощения, подтверждённой наставником.</p>
+            <p><span class="brief-lead">Театр.</span> Сезон закрыт по случаю траура. Ложи остаются за прежними домами до возобновления.</p>
+            <p><span class="brief-lead">«Асфодель».</span> Хозяйке предписано вести счёт гостям и докладывать о всяком, кто не вышел к утру.</p>
+            <p><span class="brief-lead">Уайтхолл.</span> Внимание к делам клуба возросло. Поверенных дважды в неделю менять маршрутами.</p>
+          </div>
+        </aside>
+      </div>
+
+      <section class="ads">
+        <h3 class="ads-head">Объявления Капитула</h3>
+        <div class="ads-grid">
+          <p class="ad"><span class="ad-lead">Угодья.</span> Уайтчепел, Шедуэлл, Спиталфилдс закрыты до особого распоряжения. Нарушение границ приравнивается к охоте на чужой земле.</p>
+          <p class="ad"><span class="ad-lead">Долг.</span> За домом Хартли числится вторая просрочка. Кредиторам надлежит воздержаться от самостоятельных мер до решения Магистров.</p>
+          <p class="ad"><span class="ad-lead">Вызов.</span> Неофитам первого десятилетия явиться в Капитул в ночь на пятницу. Наставникам присутствовать при своих.</p>
+          <p class="ad"><span class="ad-lead">Ищется.</span> Служащий архива Тауэра, отпущенный без объяснений 12-го числа. Живым. Настоятельно — живым.</p>
+          <p class="ad"><span class="ad-lead">Питомцы.</span> Двое из числа приглашённых более не допускаются к ночным приёмам. Имена сообщены привратнику.</p>
+          <p class="ad"><span class="ad-lead">Приобретается.</span> Городской дом с глухим подвалом, к западу от парка, без соседей по стене. Расчёт немедленный, через смертного поверенного.</p>
+        </div>
+      </section>
+
+      <div class="issue-foot">
+        <div class="foot-actions">
           <button class="copy-link" type="button">Ссылка на выпуск</button>
-          <p class="issue-sign">По воле Высшего круга</p>
+          <button class="print-btn" type="button">Печать</button>
         </div>
+        <p class="issue-sign">По воле Высшего круга</p>
       </div>
+    </article>
+
+    <div class="archive">
+      <p class="archive-head">Прошлые оттиски</p>
+
+      <details class="issue issue-mourning" id="albion-1852-10-13">
+        <summary>
+          <span class="idx-date">13 октября</span>
+          <span class="idx-title">Мы оплакиваем не королеву<span class="idx-tag">Траурный</span></span>
+          <span class="idx-mark" aria-hidden="true">+</span>
+        </summary>
+
+        <div class="issue-body">
+          <p class="body-deck">Пятнадцать лет работы у трона окончились за одну ночь. Наследнику одиннадцать</p>
+          <div class="columns">
+
+            <p class="lead">Утренний лист сообщает Империи о «гнилой лихорадке» и призывает к благоразумию. Мы возьмём из этого листа только одно: бюллетень подписан консилиумом, а значит, ни один из наших врачей при дворе не был отстранён и ни одна дверь пока не закрылась. Всё прочее в газете написано для тех, кто платит пенни.</p>
+
+            <blockquote class="pull">
+              «Скорбь дозволена. Радость — нет»
+              <cite>из распоряжения Высшего круга</cite>
+            </blockquote>
+
+            <p class="kicker">Что мы потеряли</p>
+            <p>Пятнадцать лет ушло на то, чтобы обвить корону так, что она перестала это замечать: колониальные поставки, назначения, тишина вокруг исчезновений. Всё это держалось на живой женщине, к которой у нас был подход. Женщины больше нет. Хартии остались, а рука, что их подписывала, остыла — и всякий, кто скажет, будто это малая перемена, пусть скажет это в Капитуле вслух.</p>
+
+            <p class="kicker">Что мы можем взять</p>
+            <p>Наследнику одиннадцать лет. За право стать при нём наставником сейчас передерутся все, кому есть что предложить регентскому совету, и в этой драке мы участвуем не первыми, а последними — когда прочие ослабнут. Ребёнок, чья воля ещё не отвердела, стоит дороже старой королевы: её приходилось убеждать, его достаточно будет <span class="sp">вырастить</span>. Терпение здесь дороже золота, а золото у нас есть.</p>
+
+            <p class="kicker">Чего не делать</p>
+            <p>Три ночи никто из членов клуба не выходит на охоту западнее Сити и не показывается в местах увеселений: Лондон в трауре, и всякое веселье будет замечено. Смертным членам клуба надлежит скорбеть громко, жертвовать щедро и хлопотать о местах в регентском совете. Питомцев на приёмы не приглашать до особого распоряжения — вид крови в дни национального траура развязывает языки даже самым покорным.</p>
+
+            <div class="notice">
+              <span class="notice-title">К сведению</span>
+              Со смертью Её Величества из королевского кабинета исчез документ, касающийся всех присутствующих. Оттиск об этом разослан отдельно и подлежит уничтожению по прочтении.
+            </div>
+
+            <div class="issue-foot">
+              <div class="foot-actions">
+                <button class="copy-link" type="button">Ссылка на выпуск</button>
+                <button class="print-btn" type="button">Печать</button>
+              </div>
+              <p class="issue-sign">По воле Высшего круга</p>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="issue" id="albion-1852-10-12">
+        <summary>
+          <span class="idx-date">12 октября</span>
+          <span class="idx-title">Пропажа из королевского кабинета<span class="idx-tag">Экстренный</span></span>
+          <span class="idx-mark" aria-hidden="true">+</span>
+        </summary>
+
+        <div class="issue-body">
+          <p class="body-deck">Реестр не найден. Каждая ночь промедления работает против рода</p>
+          <div class="columns">
+
+            <p class="lead">В ночь, когда Её Величество умирала, из королевского кабинета вынесли реестр в чёрном переплёте. Читающему нет нужды объяснять, что в нём: расписки, земельные хартии и протоколы тайной полиции, из которых следует, что верхушка Палаты лордов не менялась со времён чумы. Это не компрометирующая бумага. Это доказательство существования вида.</p>
+
+            <blockquote class="pull">
+              «Книгу вернуть. Всё остальное — второстепенно»
+              <cite>решение Высшего круга, единогласно</cite>
+            </blockquote>
+
+            <p class="kicker">Сроки</p>
+            <p>Регентский совет назначит аудит дворцовых архивов, как только разрешится вопрос о Регентстве. Столько времени у нас и есть: недели, а не месяцы. Если книга к тому дню не ляжет обратно в кабинет или не сгорит, её отсутствие заметят и начнут искать те, у кого для поисков есть Империя.</p>
+
+            <p class="kicker">Кто мог</p>
+            <p>Замки вынесены с мясом — значит, брал не лакей. Круг лиц, знавших о существовании реестра, невелик, и в нём есть наши. Магистрам предписано в трёхдневный срок отчитаться о местонахождении всех своих смертных поверенных в ночь на 11-е. Отговорка «человек мой предан» была услышана Капитулом достаточно раз, чтобы более не приниматься.</p>
+
+            <p class="kicker">Условия розыска</p>
+            <p>Свидетелей — не убивать до допроса. Тела в переулках не помогают искать книгу, а лишь ускоряют внимание Ярда к нашим угодьям. Всякому, кто доставит реестр в Капитул нераскрытым, обещано снятие всех долгов перед клубом и место в Исполнительном совете. Всякому, кто откроет его прежде, — то, что обещано за такое всегда.</p>
+
+            <div class="issue-foot">
+              <div class="foot-actions">
+                <button class="copy-link" type="button">Ссылка на выпуск</button>
+                <button class="print-btn" type="button">Печать</button>
+              </div>
+              <p class="issue-sign">По воле Высшего круга</p>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="issue" id="albion-1852-10-04">
+        <summary>
+          <span class="idx-date">4 октября</span>
+          <span class="idx-title">Читайте их газеты</span>
+          <span class="idx-mark" aria-hidden="true">+</span>
+        </summary>
+
+        <div class="issue-body">
+          <p class="body-deck">Сезон открыт, угодья расписаны, при дворе покойно. Ничто не предвещает перемен</p>
+          <div class="columns">
+
+            <p class="lead">Сегодня утром мальчишки на Стрэнде кричали, что «Таймс» — голос самой Империи. Мальчишки правы, и потому оттиск начинается с напоминания, которое старшим кажется скучным: утренний лист надлежит читать всякому члену клуба, и читать прежде завтрака. Не ради новостей. Ради того, чтобы знать, во что сегодня верит стадо.</p>
+
+            <blockquote class="pull">
+              «Их правда дня — наше расписание на ночь»
+              <cite>из наставления неофитам</cite>
+            </blockquote>
+
+            <p class="kicker">Отчего это важно</p>
+            <p>Газета сообщает, где нынче стоит полиция, чьи конторы разорились, кто уехал за границу и чей дом опустел до весны. Она же исправно объясняет читателю всякую нашу оплошность: обескровленное тело — маньяк, вырванный замок — гидравлика налётчиков, прыжок через улицу — дурной опиум. Пока смертные сами придумывают нам оправдания, нам довольно не мешать им в этом.</p>
+
+            <p class="kicker">Сезон</p>
+            <p>Угодья на осень расписаны и вывешены в Капитуле. Театр Её Величества открыт, ложи закреплены за прежними домами. Приёмы для питомцев — по четвергам, как заведено. Неофитам напоминают: в партере сидит корм, в ложах сидят те, кого мы называем друзьями, и путать их не следует ни в речи, ни в манерах.</p>
+
+            <p class="kicker">При дворе</p>
+            <p>Спокойно. Наши люди при кабинете на своих местах, поставки из колоний идут прежним порядком, вопросов к клубу нет ни у Уайтхолла, ни у Ярда. Пятнадцать лет труда приносят плоды тихо, как и надлежит. Ничто не предвещает перемен, а значит, лучшее, что может сделать всякий из нас в этот сезон, — не делать ничего примечательного.</p>
+
+            <div class="issue-foot">
+              <div class="foot-actions">
+                <button class="copy-link" type="button">Ссылка на выпуск</button>
+                <button class="print-btn" type="button">Печать</button>
+              </div>
+              <p class="issue-sign">По воле Высшего круга</p>
+            </div>
+          </div>
+        </div>
+      </details>
+
     </div>
-  </details>
 
-  <details class="issue issue-mourning" id="albion-1852-10-13">
-    <summary>
-      <div class="issue-meta">
-        <span class="date">13 октября 1852</span>
-        <span>Оттиск для членов клуба</span>
-      </div>
-      <h2 class="issue-title">Мы оплакиваем не королеву</h2>
-      <p class="issue-standfirst">Пятнадцать лет работы у трона окончились за одну ночь. Наследнику одиннадцать.</p>
-      <span class="issue-open-hint">Читать выпуск</span>
-    </summary>
-
-    <div class="issue-body">
-      <div class="columns">
-
-        <p class="lead">Утренний лист сообщает Империи о «гнилой лихорадке» и призывает к благоразумию. Мы возьмём из этого листа только одно: бюллетень подписан консилиумом, а значит, ни один из наших врачей при дворе не был отстранён и ни одна дверь пока не закрылась. Всё прочее в газете написано для тех, кто платит пенни.</p>
-
-        <blockquote class="pull">
-          «Скорбь дозволена. Радость — нет»
-          <cite>из распоряжения Высшего круга</cite>
-        </blockquote>
-
-        <p class="kicker">Что мы потеряли</p>
-        <p>Пятнадцать лет ушло на то, чтобы обвить корону так, что она перестала это замечать: колониальные поставки, назначения, тишина вокруг исчезновений. Всё это держалось на живой женщине, к которой у нас был подход. Женщины больше нет. Хартии остались, а рука, что их подписывала, остыла — и всякий, кто скажет, будто это малая перемена, пусть скажет это в Капитуле вслух.</p>
-
-        <p class="kicker">Что мы можем взять</p>
-        <p>Наследнику одиннадцать лет. За право стать при нём наставником сейчас передерутся все, кому есть что предложить регентскому совету, и в этой драке мы участвуем не первыми, а последними — когда прочие ослабнут. Ребёнок, чья воля ещё не отвердела, стоит дороже старой королевы: её приходилось убеждать, его достаточно будет вырастить. Терпение здесь дороже золота, а золото у нас есть.</p>
-
-        <p class="kicker">Чего не делать</p>
-        <p>Три ночи никто из членов клуба не выходит на охоту западнее Сити и не показывается в местах увеселений: Лондон в трауре, и всякое веселье будет замечено. Смертным членам клуба надлежит скорбеть громко, жертвовать щедро и хлопотать о местах в регентском совете. Питомцев на приёмы не приглашать до особого распоряжения — вид крови в дни национального траура развязывает языки даже самым покорным.</p>
-
-        <div class="notice">
-          <span class="notice-title">К сведению</span>
-          Со смертью Её Величества из королевского кабинета исчез документ, касающийся всех присутствующих. Оттиск об этом разослан отдельно и подлежит уничтожению по прочтении.
-        </div>
-
-        <div class="issue-foot">
-          <button class="copy-link" type="button">Ссылка на выпуск</button>
-          <p class="issue-sign">По воле Высшего круга</p>
-        </div>
-      </div>
-    </div>
-  </details>
-
-  <details class="issue" id="albion-1852-10-12">
-    <summary>
-      <span class="stamp">Экстренный оттиск</span>
-      <div class="issue-meta">
-        <span class="date">12 октября 1852</span>
-        <span>Уничтожить по прочтении</span>
-      </div>
-      <h2 class="issue-title">Пропажа из королевского кабинета</h2>
-      <p class="issue-standfirst">Реестр не найден. Каждая ночь промедления работает против рода.</p>
-      <span class="issue-open-hint">Читать выпуск</span>
-    </summary>
-
-    <div class="issue-body">
-      <div class="columns">
-
-        <p class="lead">В ночь, когда Её Величество умирала, из королевского кабинета вынесли реестр в чёрном переплёте. Читающему нет нужды объяснять, что в нём: расписки, земельные хартии и протоколы тайной полиции, из которых следует, что верхушка Палаты лордов не менялась со времён чумы. Это не компрометирующая бумага. Это доказательство существования вида.</p>
-
-        <blockquote class="pull">
-          «Книгу вернуть. Всё остальное — второстепенно»
-          <cite>решение Высшего круга, единогласно</cite>
-        </blockquote>
-
-        <p class="kicker">Сроки</p>
-        <p>Регентский совет назначит аудит дворцовых архивов, как только разрешится вопрос о Регентстве. Столько времени у нас и есть: недели, а не месяцы. Если книга к тому дню не ляжет обратно в кабинет или не сгорит, её отсутствие заметят и начнут искать те, у кого для поисков есть Империя.</p>
-
-        <p class="kicker">Кто мог</p>
-        <p>Замки вынесены с мясом — значит, брал не лакей. Круг лиц, знавших о существовании реестра, невелик, и в нём есть наши. Магистрам предписано в трёхдневный срок отчитаться о местонахождении всех своих смертных поверенных в ночь на 11-е. Отговорка «человек мой предан» была услышана Капитулом достаточно раз, чтобы более не приниматься.</p>
-
-        <p class="kicker">Условия розыска</p>
-        <p>Свидетелей — не убивать до допроса. Тела в переулках не помогают искать книгу, а лишь ускоряют внимание Ярда к нашим угодьям. Всякому, кто доставит реестр в Капитул нераскрытым, обещано снятие всех долгов перед клубом и место в Исполнительном совете. Всякому, кто откроет его прежде, — то, что обещано за такое всегда.</p>
-
-        <div class="issue-foot">
-          <button class="copy-link" type="button">Ссылка на выпуск</button>
-          <p class="issue-sign">По воле Высшего круга</p>
-        </div>
-      </div>
-    </div>
-  </details>
-
-  <details class="issue" id="albion-1852-10-04">
-    <summary>
-      <div class="issue-meta">
-        <span class="date">4 октября 1852</span>
-        <span>Оттиск для членов клуба</span>
-      </div>
-      <h2 class="issue-title">Читайте их газеты</h2>
-      <p class="issue-standfirst">Сезон открыт, угодья расписаны, при дворе покойно. Ничто не предвещает перемен.</p>
-      <span class="issue-open-hint">Читать выпуск</span>
-    </summary>
-
-    <div class="issue-body">
-      <div class="columns">
-
-        <p class="lead">Сегодня утром мальчишки на Стрэнде кричали, что «Таймс» — голос самой Империи. Мальчишки правы, и потому оттиск начинается с напоминания, которое старшим кажется скучным: утренний лист надлежит читать всякому члену клуба, и читать прежде завтрака. Не ради новостей. Ради того, чтобы знать, во что сегодня верит стадо.</p>
-
-        <blockquote class="pull">
-          «Их правда дня — наше расписание на ночь»
-          <cite>из наставления неофитам</cite>
-        </blockquote>
-
-        <p class="kicker">Отчего это важно</p>
-        <p>Газета сообщает, где нынче стоит полиция, чьи конторы разорились, кто уехал за границу и чей дом опустел до весны. Она же исправно объясняет читателю всякую нашу оплошность: обескровленное тело — маньяк, вырванный замок — гидравлика налётчиков, прыжок через улицу — дурной опиум. Пока смертные сами придумывают нам оправдания, нам довольно не мешать им в этом.</p>
-
-        <p class="kicker">Сезон</p>
-        <p>Угодья на осень расписаны и вывешены в Капитуле. Театр Её Величества открыт, ложи закреплены за прежними домами. Приёмы для питомцев — по четвергам, как заведено. Неофитам напоминают: в партере сидит корм, в ложах сидят те, кого мы называем друзьями, и путать их не следует ни в речи, ни в манерах.</p>
-
-        <p class="kicker">При дворе</p>
-        <p>Спокойно. Наши люди при кабинете на своих местах, поставки из колоний идут прежним порядком, вопросов к клубу нет ни у Уайтхолла, ни у Ярда. Пятнадцать лет труда приносят плоды тихо, как и надлежит. Ничто не предвещает перемен, а значит, лучшее, что может сделать всякий из нас в этот сезон, — не делать ничего примечательного.</p>
-
-        <div class="issue-foot">
-          <button class="copy-link" type="button">Ссылка на выпуск</button>
-          <p class="issue-sign">По воле Высшего круга</p>
-        </div>
-      </div>
-    </div>
-  </details>
+    <p class="colophon">
+      Оттиснуто в двадцати двух экземплярах &middot; Уничтожить по прочтении<br>
+      Утрата листа приравнивается к оглашению
+    </p>
+  </div>
 
   <svg class="flourish" viewBox="0 0 400 40" aria-hidden="true" focusable="false">
     <path d="M20,20 C70,20 90,6 120,14 C150,22 160,20 200,20 C240,20 250,22 280,14 C310,6 330,20 380,20"/>
@@ -1068,25 +1338,46 @@ footer a:hover { border-bottom-color: var(--accent); }
     <path d="M280,14 C292,26 308,30 322,24 C336,18 334,6 322,8 C312,10 316,22 328,20"/>
     <rect class="gem" x="196" y="16" width="8" height="8" transform="rotate(45 200 20)"/>
   </svg>
-
 </section>
 
 <!-- =========================================================
-     ШАБЛОН ВЫПУСКА — СКОПИРУЙ И ВСТАВЬ ВНУТРЬ НУЖНОЙ ВКЛАДКИ
+     КАК ДОБАВИТЬ НОВЫЙ ВЫПУСК
 
-<details class="issue" id="times-1852-11-03">   ← id обязателен: по нему работает ссылка на выпуск
-  <summary>
-    <span class="stamp">Экстренный выпуск</span>   ← необязательно, штамп наискось
-    <div class="issue-meta">
-      <span class="date">ДАТА</span>
-      <span>ПОДПИСЬ СПРАВА</span>
-    </div>
-    <h2 class="issue-title">ЗАГОЛОВОК</h2>
-    <p class="issue-standfirst">Подзаголовок в одну-две строки.</p>
-    <span class="issue-open-hint">Читать выпуск</span>
-  </summary>
+     Свежий номер всегда стоит первой полосой (article class="front"),
+     а прежний уезжает в подшивку:
 
-  <div class="issue-body">
+     1. У нынешней первой полосы поменяй обёртку на строку подшивки:
+        было:  <article class="front" id="times-1852-10-21"> ... </article>
+        стало: <details class="issue" id="times-1852-10-21">
+                 <summary>
+                   <span class="idx-date">21 октября</span>
+                   <span class="idx-title">Зверь в тумане: чудовищные убийства</span>
+                   <span class="idx-mark" aria-hidden="true">+</span>
+                 </summary>
+                 <div class="issue-body">
+                   <p class="body-deck">Подзаголовок</p>
+                   <div class="columns"> ... тот же текст ... </div>
+                 </div>
+               </details>
+        Боковую колонку (aside class="rail") при этом можно удалить —
+        в подшивке она не нужна. Перенеси блок в <div class="archive">.
+
+     2. На её место вставь свежий номер по шаблону ниже.
+
+     ---------- ШАБЛОН ПЕРВОЙ ПОЛОСЫ ----------
+
+<article class="front" id="times-1852-11-03">
+  <span class="stamp">Экстренный выпуск</span>        ← необязательно
+  <div class="front-meta">
+    <span class="date">3 ноября 1852</span>
+    <span>Выпуск № XXV</span>
+  </div>
+
+  <h2 class="hed">ГЛАВНЫЙ ЗАГОЛОВОК</h2>
+  <p class="deck deck-1">Вторая ступень заголовка</p>
+  <p class="deck deck-2">Третья ступень: суть в одну строку</p>
+
+  <div class="front-grid">
     <div class="columns">
 
       <figure class="cut span-all">
@@ -1094,11 +1385,9 @@ footer a:hover { border-bottom-color: var(--accent); }
         <figcaption>Подпись к иллюстрации.</figcaption>
       </figure>
 
+      <p class="kicker" lang="en">Pay attention</p>
       <p class="lead">Первый абзац — с буквицей.</p>
-      <p>Обычный абзац.</p>
-
-      <p class="kicker">Рубрика внутри статьи</p>
-      <p>Текст после рубрики.</p>
+      <p>Обычный абзац: отступ первой строки ставится сам.</p>
 
       <blockquote class="pull">
         «Цитата крупным шрифтом»
@@ -1107,35 +1396,54 @@ footer a:hover { border-bottom-color: var(--accent); }
 
       <div class="notice">
         <span class="notice-title">Объявление</span>
-        Текст объявления в рамке.
-      </div>
-
-      <section class="ads">
-        <h3 class="ads-head">Частные объявления</h3>
-        <div class="ads-grid">
-          <p class="ad"><span class="ad-lead">Разыскивается.</span> Текст объявления.</p>
-          <p class="ad"><span class="ad-lead">Требуется.</span> Текст объявления.</p>
-          <p class="ad"><span class="ad-lead">Продаётся.</span> Текст объявления.</p>
-        </div>
-      </section>
-
-      <div class="issue-foot">
-        <button class="copy-link" type="button">Ссылка на выпуск</button>
-        <p class="issue-sign">Подпись редакции</p>
+        Текст в рамке.
       </div>
     </div>
+
+    <aside class="rail">
+      <div class="rail-box">
+        <h3 class="rail-head">Погода</h3>
+        <p>Две-три строки.</p>
+      </div>
+      <div class="rail-box">
+        <h3 class="rail-head">Биржа</h3>
+        <dl class="figures">
+          <div><dt>Консоли</dt><dd>98⅜</dd></div>
+          <div><dt>Пшеница, квартер</dt><dd>40s 6d</dd></div>
+        </dl>
+      </div>
+      <div class="rail-box">
+        <h3 class="rail-head">Кратко</h3>
+        <p><span class="brief-lead">Парламент.</span> Две строки.</p>
+      </div>
+    </aside>
   </div>
-</details>
+
+  <section class="ads">
+    <h3 class="ads-head">Частные объявления</h3>
+    <div class="ads-grid">
+      <p class="ad"><span class="ad-lead">Разыскивается.</span> Текст.</p>
+      <p class="ad"><span class="ad-lead">Требуется.</span> Текст.</p>
+    </div>
+  </section>
+
+  <div class="issue-foot">
+    <div class="foot-actions">
+      <button class="copy-link" type="button">Ссылка на выпуск</button>
+      <button class="print-btn" type="button">Печать</button>
+    </div>
+    <p class="issue-sign">Редакция «Таймс»</p>
+  </div>
+</article>
 
      ПОЛЕЗНОЕ:
-     • id выпуска — латиницей, без пробелов. Схема: times-ГОД-МЕСЯЦ-ЧИСЛО
-       для людей и albion-ГОД-МЕСЯЦ-ЧИСЛО для вампиров.
-     • траурная рамка: <details class="issue issue-mourning" id="...">
-     • экстренный выпуск: <span class="stamp">Экстренный выпуск</span> первой строкой в summary
-     • раскрыть выпуск сразу: <details class="issue" open id="...">
-     • class="span-all" на любом блоке растягивает его на обе колонки
-     • картинка: <figure class="cut"><img src="..." alt=""><figcaption>...</figcaption></figure>
+     • id — латиницей: times-ГОД-МЕСЯЦ-ЧИСЛО для людей, albion-… для вампиров
+     • траурный номер: <details class="issue issue-mourning" ...> — чёрная кайма
+     • метка в подшивке: <span class="idx-tag">Экстренный</span> внутри idx-title
+     • выделение словом: <span class="sp">разрядкой</span> вместо курсива
+     • class="span-all" растягивает блок на обе колонки
      • пустая рамка вместо картинки: <div class="plate">Гравюра</div>
+     • сургучная печать: <span class="seal" aria-hidden="true">A</span> в начале .front
      ========================================================= -->
 
 </main>
@@ -1155,11 +1463,11 @@ footer a:hover { border-bottom-color: var(--accent); }
 
   var buttons  = Array.prototype.slice.call(document.querySelectorAll('.edition-btn'));
   var sections = Array.prototype.slice.call(document.querySelectorAll('.edition'));
-  var label    = document.getElementById('editionLabel');
+  var midLabel = document.getElementById('datelineMid');
 
   var META = {
-    humans:   { theme: 'light', label: 'Издание для людей' },
-    vampires: { theme: 'dark',  label: 'Оттиск для «Альбиона»' }
+    humans:   { theme: 'light', label: 'Лондон \u00b7 MDCCCLII' },
+    vampires: { theme: 'dark',  label: 'Оттиск для членов клуба' }
   };
 
   function activate(name, updateHash) {
@@ -1175,7 +1483,7 @@ footer a:hover { border-bottom-color: var(--accent); }
     sections.forEach(function (s) { s.classList.toggle('active', s.id === name); });
 
     document.documentElement.dataset.theme = meta.theme;
-    label.textContent = meta.label;
+    midLabel.textContent = meta.label;
 
     if (updateHash !== false) history.replaceState(null, '', '#' + name);
   }
@@ -1196,12 +1504,13 @@ footer a:hover { border-bottom-color: var(--accent); }
 
   function openIssue(id) {
     var el = id && document.getElementById(id);
-    if (!el || !el.classList.contains('issue')) return false;
+    if (!el || !(el.classList.contains('issue') || el.classList.contains('front'))) return false;
 
     var section = el.closest('.edition');
     if (section) activate(section.id, false);
 
-    el.open = true;
+    if (el.tagName.toLowerCase() === 'details') el.open = true;
+
     el.classList.remove('flash');
     void el.offsetWidth;
     el.classList.add('flash');
@@ -1240,29 +1549,55 @@ footer a:hover { border-bottom-color: var(--accent); }
   }
 
   document.addEventListener('click', function (e) {
-    var btn = e.target.closest && e.target.closest('.copy-link');
-    if (!btn) return;
+    if (!e.target.closest) return;
 
-    var issue = btn.closest('.issue');
-    if (!issue || !issue.id) return;
+    /* копирование ссылки */
+    var copyBtn = e.target.closest('.copy-link');
+    if (copyBtn) {
+      var issue = copyBtn.closest('.issue, .front');
+      if (!issue || !issue.id) return;
 
-    var url = location.origin + location.pathname + '#' + issue.id;
-    var original = btn.dataset.label || btn.textContent;
-    btn.dataset.label = original;
+      var url = location.origin + location.pathname + '#' + issue.id;
+      copyBtn.dataset.label = copyBtn.dataset.label || copyBtn.textContent;
 
-    copyText(url).then(function () {
-      btn.textContent = 'Ссылка скопирована';
-      btn.classList.add('done');
-    }).catch(function () {
-      btn.textContent = url;
-    });
+      copyText(url).then(function () {
+        copyBtn.textContent = 'Ссылка скопирована';
+        copyBtn.classList.add('done');
+      }).catch(function () {
+        copyBtn.textContent = url;
+      });
 
-    clearTimeout(btn._t);
-    btn._t = setTimeout(function () {
-      btn.textContent = btn.dataset.label;
-      btn.classList.remove('done');
-    }, 2200);
+      clearTimeout(copyBtn._t);
+      copyBtn._t = setTimeout(function () {
+        copyBtn.textContent = copyBtn.dataset.label;
+        copyBtn.classList.remove('done');
+      }, 2200);
+      return;
+    }
+
+    /* печать одного выпуска */
+    var printBtn = e.target.closest('.print-btn');
+    if (printBtn) {
+      var target = printBtn.closest('.issue, .front');
+      if (!target) return;
+      target.classList.add('print-target');
+      document.body.classList.add('print-single');
+      window.print();
+    }
   });
+
+  function clearPrint() {
+    document.body.classList.remove('print-single');
+    var t = document.querySelector('.print-target');
+    if (t) t.classList.remove('print-target');
+  }
+  window.addEventListener('afterprint', clearPrint);
+  if (window.matchMedia) {
+    var mq = window.matchMedia('print');
+    if (mq.addEventListener) {
+      mq.addEventListener('change', function (e) { if (!e.matches) clearPrint(); });
+    }
+  }
 
   /* ---------- кнопка «наверх» ---------- */
 
